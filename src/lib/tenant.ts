@@ -33,14 +33,24 @@ export async function getCurrentTenant() {
     take: 2,
     orderBy: { createdAt: "asc" },
   });
-  if (organisations.length !== 1) {
+  if (organisations.length > 1) {
     throw new Error("No active organisation is available for this account.");
   }
-  const branch = await prisma.branch.findFirst({
-    where: { organisationId: organisations[0].id, isActive: true },
-    orderBy: { createdAt: "asc" },
+  const organisation = organisations[0] ?? await prisma.organisation.upsert({
+    where: { slug: "default" },
+    update: {},
+    create: { name: "CellDealer", slug: "default" },
   });
-  if (!branch) throw new Error("The organisation has no active branch.");
+  const branch = await prisma.branch.upsert({
+    where: {
+      organisationId_name: {
+        organisationId: organisation.id,
+        name: "Main Branch",
+      },
+    },
+    update: { isActive: true },
+    create: { organisationId: organisation.id, name: "Main Branch" },
+  });
 
-  return { organisationId: organisations[0].id, branchId: branch.id, userId: session?.user.id ?? null };
+  return { organisationId: organisation.id, branchId: branch.id, userId: session?.user.id ?? null };
 }

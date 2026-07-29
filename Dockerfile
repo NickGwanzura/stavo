@@ -34,6 +34,11 @@ COPY --from=builder /app/public ./public
 # Copy Prisma for runtime migrations
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+# Keep the project's pinned Prisma CLI and engines in the runtime image. Without
+# these, `npx prisma` downloads the latest major version at startup, which can
+# reject this project's Prisma 5 schema before migrations are applied.
+COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/@prisma/engines ./node_modules/@prisma/engines
 
 RUN chown -R nextjs:nodejs /app
 
@@ -45,5 +50,6 @@ ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 ENV NODE_ENV production
 
-# Run migration (continue if it fails) then start server
-CMD sh -c "npx prisma migrate deploy --schema=./prisma/schema.prisma 2>&1 || true; node server.js"
+# Migrations must succeed before serving traffic; otherwise the app starts
+# against an uninitialised database and write actions fail later.
+CMD sh -c "npx prisma migrate deploy --schema=./prisma/schema.prisma && node server.js"

@@ -38,7 +38,7 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 # these, `npx prisma` downloads the latest major version at startup, which can
 # reject this project's Prisma 5 schema before migrations are applied.
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma/engines ./node_modules/@prisma/engines
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 RUN chown -R nextjs:nodejs /app
 

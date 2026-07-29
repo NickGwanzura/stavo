@@ -112,10 +112,8 @@ export default function ReceiveInventoryPage() {
 
     try {
       const fd = new FormData();
-      fd.append("organisationId", "org-placeholder");
-      fd.append("branchId", "branch-placeholder");
       fd.append("acquisitionType", formData.acquisitionType as string);
-      fd.append("brandId", formData.brand as string);
+      fd.append("brandName", formData.brand as string);
       fd.append("productName", `${formData.brand || "Phone"} ${formData.model || ""}`.trim());
       fd.append("colour", formData.colour as string);
       fd.append("storageCapacity", formData.storageCapacity as string);

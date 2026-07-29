@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/db";
 import { ExpensesClient } from "./expenses-client";
+import { getCurrentTenant } from "@/lib/tenant";
 
 
 export const dynamic = "force-dynamic";
 
 export default async function ExpensesPage() {
   try {
+    const tenant = await getCurrentTenant();
     const [expenses, categories] = await Promise.all([
       prisma.expense.findMany({
+        where: { organisationId: tenant.organisationId },
         orderBy: { expenseDate: "desc" },
         take: 100,
         include: {
@@ -17,7 +20,7 @@ export default async function ExpensesPage() {
         },
       }),
       prisma.expenseCategory.findMany({
-        where: { isActive: true },
+        where: { organisationId: tenant.organisationId, isActive: true },
         orderBy: { name: "asc" },
       }),
     ]);

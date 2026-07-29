@@ -5,14 +5,18 @@ import { validateIMEI } from "@/lib/imei";
 import { generateStockNumber } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { getCurrentTenant } from "@/lib/tenant";
+
+const formBoolean = z.preprocess(
+  (value) => (typeof value === "string" ? value === "true" : value),
+  z.boolean().optional()
+);
 
 // ──────────────────────────────────────────────────────────────
 // Schemas
 // ──────────────────────────────────────────────────────────────
 
 const receiveCellphoneSchema = z.object({
-  organisationId: z.string(),
-  branchId: z.string(),
   acquisitionType: z.enum([
     "PURCHASED_FROM_SUPPLIER",
     "BOUGHT_FROM_INDIVIDUAL",
@@ -24,7 +28,7 @@ const receiveCellphoneSchema = z.object({
   ]),
   sourceName: z.string().optional(),
   sourceId: z.string().optional(),
-  brandId: z.string().optional(),
+  brandName: z.string().trim().min(1).optional(),
   modelId: z.string().optional(),
   productName: z.string().optional(),
   colour: z.string().optional(),
@@ -34,9 +38,9 @@ const receiveCellphoneSchema = z.object({
   networkStatus: z.string().optional(),
   condition: z.string().optional(),
   grade: z.string().optional(),
-  boxIncluded: z.boolean().optional(),
-  chargerIncluded: z.boolean().optional(),
-  warrantyPeriod: z.number().optional(),
+  boxIncluded: formBoolean,
+  chargerIncluded: formBoolean,
+  warrantyPeriod: z.coerce.number().min(0).optional(),
   purchaseDate: z.string().optional(),
   notes: z.string().optional(),
   // IMEI
@@ -44,32 +48,30 @@ const receiveCellphoneSchema = z.object({
   imei2: z.string().optional(),
   serialNumber: z.string().optional(),
   // Costs
-  purchasePrice: z.number().optional(),
-  shippingCost: z.number().optional(),
-  customsCost: z.number().optional(),
-  repairCost: z.number().optional(),
-  transportCost: z.number().optional(),
-  commissionCost: z.number().optional(),
-  otherCost: z.number().optional(),
+  purchasePrice: z.coerce.number().min(0).optional(),
+  shippingCost: z.coerce.number().min(0).optional(),
+  customsCost: z.coerce.number().min(0).optional(),
+  repairCost: z.coerce.number().min(0).optional(),
+  transportCost: z.coerce.number().min(0).optional(),
+  commissionCost: z.coerce.number().min(0).optional(),
+  otherCost: z.coerce.number().min(0).optional(),
   currency: z.string().default("USD"),
   // Pricing
-  cashPrice: z.number().optional(),
-  wholesalePrice: z.number().optional(),
-  instalmentPrice: z.number().optional(),
-  minimumPrice: z.number().optional(),
+  cashPrice: z.coerce.number().min(0).optional(),
+  wholesalePrice: z.coerce.number().min(0).optional(),
+  instalmentPrice: z.coerce.number().min(0).optional(),
+  minimumPrice: z.coerce.number().min(0).optional(),
 });
 
 const receiveAccessorySchema = z.object({
-  organisationId: z.string(),
-  branchId: z.string(),
   brandId: z.string().optional(),
   modelId: z.string().optional(),
   sku: z.string().optional(),
   productName: z.string(),
   description: z.string().optional(),
-  quantity: z.number().min(1).default(1),
-  unitCost: z.number().optional(),
-  sellingPrice: z.number().optional(),
+  quantity: z.coerce.number().int().min(1).default(1),
+  unitCost: z.coerce.number().min(0).optional(),
+  sellingPrice: z.coerce.number().min(0).optional(),
 });
 
 // ──────────────────────────────────────────────────────────────
@@ -80,6 +82,14 @@ export async function receiveCellphone(formData: FormData) {
   try {
     const raw = Object.fromEntries(formData);
     const data = receiveCellphoneSchema.parse(raw);
+    const tenant = await getCurrentTenant();
+
+    const brand = data.brandName
+      ? await prisma.brand.findFirst({
+          where: { organisationId: tenant.organisationId, name: { equals: data.brandName, mode: "insensitive" }, isActive: true },
+          select: { id: true },
+        })
+      : null;
 
     // Validate IMEI if provided
     if (data.imei1 && !validateIMEI(data.imei1)) {
@@ -93,7 +103,7 @@ export async function receiveCellphone(formData: FormData) {
     if (data.imei1) {
       const existing = await prisma.productIdentifier.findFirst({
         where: {
-          organisationId: data.organisationId,
+          organisationId: tenant.organisationId,
           value: data.imei1,
           isActive: true,
         },
@@ -111,11 +121,11 @@ export async function receiveCellphone(formData: FormData) {
       // Create the inventory item
       const inventoryItem = await tx.inventoryItem.create({
         data: {
-          organisationId: data.organisationId,
-          branchId: data.branchId,
+          organisationId: tenant.organisationId,
+          branchId: tenant.branchId,
           stockNumber,
           productName: data.productName || `Phone ${data.imei1?.slice(-4) || stockNumber.slice(-6)}`,
-          brandId: data.brandId,
+          brandId: brand?.id,
           modelId: data.modelId,
           colour: data.colour,
           storageCapacity: data.storageCapacity,
@@ -135,9 +145,9 @@ export async function receiveCellphone(formData: FormData) {
 
       // Create identifiers
       const identifiers: { organisationId: string; itemId: string; type: string; value: string }[] = [];
-      if (data.imei1) identifiers.push({ organisationId: data.organisationId, itemId: inventoryItem.id, type: "IMEI_1", value: data.imei1 });
-      if (data.imei2) identifiers.push({ organisationId: data.organisationId, itemId: inventoryItem.id, type: "IMEI_2", value: data.imei2 });
-      if (data.serialNumber) identifiers.push({ organisationId: data.organisationId, itemId: inventoryItem.id, type: "SERIAL", value: data.serialNumber });
+      if (data.imei1) identifiers.push({ organisationId: tenant.organisationId, itemId: inventoryItem.id, type: "IMEI_1", value: data.imei1 });
+      if (data.imei2) identifiers.push({ organisationId: tenant.organisationId, itemId: inventoryItem.id, type: "IMEI_2", value: data.imei2 });
+      if (data.serialNumber) identifiers.push({ organisationId: tenant.organisationId, itemId: inventoryItem.id, type: "SERIAL", value: data.serialNumber });
 
       if (identifiers.length > 0) {
         await tx.productIdentifier.createMany({ data: identifiers });
@@ -146,8 +156,8 @@ export async function receiveCellphone(formData: FormData) {
       // Create acquisition record
       const acquisition = await tx.acquisition.create({
         data: {
-          organisationId: data.organisationId,
-          branchId: data.branchId,
+          organisationId: tenant.organisationId,
+          branchId: tenant.branchId,
           itemId: inventoryItem.id,
           type: data.acquisitionType,
           sourceName: data.sourceName,
@@ -199,11 +209,12 @@ export async function receiveAccessory(formData: FormData) {
   try {
     const raw = Object.fromEntries(formData);
     const data = receiveAccessorySchema.parse(raw);
+    const tenant = await getCurrentTenant();
 
     // Check for existing SKU
     if (data.sku) {
       const existing = await prisma.accessoryStock.findFirst({
-        where: { organisationId: data.organisationId, sku: data.sku },
+        where: { organisationId: tenant.organisationId, sku: data.sku },
       });
       if (existing) {
         // Add to existing quantity
@@ -218,8 +229,8 @@ export async function receiveAccessory(formData: FormData) {
 
     const stock = await prisma.accessoryStock.create({
       data: {
-        organisationId: data.organisationId,
-        branchId: data.branchId,
+        organisationId: tenant.organisationId,
+        branchId: tenant.branchId,
         brandId: data.brandId,
         modelId: data.modelId,
         sku: data.sku,
@@ -243,7 +254,7 @@ export async function receiveAccessory(formData: FormData) {
 }
 
 export async function getInventoryItems(organisationId: string, branchId?: string) {
-  const where: Record<string, unknown> = { isActive: true, isAccessory: false };
+  const where: Record<string, unknown> = { organisationId, isActive: true, isAccessory: false };
   if (branchId) where.branchId = branchId;
 
   const items = await prisma.inventoryItem.findMany({
@@ -265,8 +276,9 @@ export async function getInventoryItems(organisationId: string, branchId?: strin
 }
 
 export async function getInventoryItemById(id: string) {
-  const item = await prisma.inventoryItem.findUnique({
-    where: { id },
+  const tenant = await getCurrentTenant();
+  const item = await prisma.inventoryItem.findFirst({
+    where: { id, organisationId: tenant.organisationId },
     include: {
       brand: { select: { name: true } },
       model: { select: { name: true } },

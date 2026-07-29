@@ -1,14 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/db";
 import { CustomersClient } from "./customers-client";
+import { getCurrentTenant } from "@/lib/tenant";
 
 
 export const dynamic = "force-dynamic";
 
 export default async function CustomersPage() {
   try {
+    const tenant = await getCurrentTenant();
     const customers = await prisma.customer.findMany({
-      where: { isActive: true },
+      where: { organisationId: tenant.organisationId, isActive: true },
       orderBy: { createdAt: "desc" },
       take: 100,
     });

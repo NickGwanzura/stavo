@@ -3,9 +3,9 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { getCurrentTenant } from "@/lib/tenant";
 
 const customerSchema = z.object({
-  organisationId: z.string(),
   name: z.string().min(1, "Name is required"),
   phone: z.string().min(1, "Phone is required"),
   whatsapp: z.string().optional(),
@@ -13,7 +13,7 @@ const customerSchema = z.object({
   address: z.string().optional(),
   nationalId: z.string().optional(),
   customerType: z.string().default("Walk-in"),
-  creditLimit: z.number().optional(),
+  creditLimit: z.coerce.number().min(0).optional(),
   notes: z.string().optional(),
 });
 
@@ -21,10 +21,11 @@ export async function createCustomer(formData: FormData) {
   try {
     const raw = Object.fromEntries(formData);
     const data = customerSchema.parse(raw);
+    const tenant = await getCurrentTenant();
 
     const customer = await prisma.customer.create({
       data: {
-        organisationId: data.organisationId,
+        organisationId: tenant.organisationId,
         name: data.name,
         phone: data.phone,
         whatsapp: data.whatsapp,

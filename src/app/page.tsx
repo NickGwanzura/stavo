@@ -1,10 +1,12 @@
 import { DashboardClient } from "./dashboard-client";
+import { getCurrentTenant } from "@/lib/tenant";
 
 export const dynamic = "force-dynamic";
 
 async function getDashboardData() {
   try {
     const { prisma } = await import("@/lib/db");
+    const tenant = await getCurrentTenant();
     const todayStart = new Date(new Date().setHours(0, 0, 0, 0));
 
     const [
@@ -15,31 +17,33 @@ async function getDashboardData() {
       soldTodayCount,
       totalAccessoryStock,
     ] = await Promise.all([
-      prisma.inventoryItem.count({ where: { isActive: true } }),
+      prisma.inventoryItem.count({ where: { organisationId: tenant.organisationId, isActive: true } }),
       prisma.inventoryItem.count({
-        where: { isActive: true, status: "IN_STOCK" },
+        where: { organisationId: tenant.organisationId, isActive: true, status: "IN_STOCK" },
       }),
       prisma.inventoryItem.count({
-        where: { isActive: true, status: "RESERVED" },
+        where: { organisationId: tenant.organisationId, isActive: true, status: "RESERVED" },
       }),
       prisma.inventoryItem.count({
-        where: { isActive: true, status: "IN_REPAIR" },
+        where: { organisationId: tenant.organisationId, isActive: true, status: "IN_REPAIR" },
       }),
       prisma.inventoryItem.count({
         where: {
+          organisationId: tenant.organisationId,
           status: "SOLD",
           updatedAt: { gte: todayStart },
         },
       }),
       prisma.accessoryStock.aggregate({
         _sum: { quantity: true },
-        where: { isActive: true },
+        where: { organisationId: tenant.organisationId, isActive: true },
       }),
     ]);
 
     const todaySales = await prisma.sale.aggregate({
       _sum: { total: true },
       where: {
+        organisationId: tenant.organisationId,
         saleDate: { gte: todayStart },
         status: "COMPLETED",
       },
@@ -48,6 +52,7 @@ async function getDashboardData() {
     const todayExpenses = await prisma.expense.aggregate({
       _sum: { amount: true },
       where: {
+        organisationId: tenant.organisationId,
         expenseDate: { gte: todayStart },
         status: "APPROVED",
       },
@@ -58,7 +63,7 @@ async function getDashboardData() {
       where: {
         type: "CASH",
         isActive: true,
-        item: { isActive: true, status: "IN_STOCK" },
+        item: { organisationId: tenant.organisationId, isActive: true, status: "IN_STOCK" },
       },
     });
 

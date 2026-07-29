@@ -83,7 +83,6 @@ export function CustomersClient({ customers }: { customers: CustomerData[] }) {
           <Card className="border-emerald-200">
             <CardContent className="p-4">
               <form onSubmit={handleCreateCustomer} className="space-y-3">
-                <input type="hidden" name="organisationId" value="org-placeholder" />
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <Label>Name *</Label>

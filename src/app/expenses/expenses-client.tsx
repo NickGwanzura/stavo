@@ -74,7 +74,7 @@ export function ExpensesClient({
   async function handleApprove(expenseId: string) {
     try {
       const { approveExpense } = await import("@/server/actions/expenses");
-      const result = await approveExpense(expenseId, "user-placeholder");
+      const result = await approveExpense(expenseId);
       if (result.success) {
         showToast("Expense approved", "success");
       } else {
@@ -115,8 +115,6 @@ export function ExpensesClient({
           <Card className="border-emerald-200">
             <CardContent className="p-4">
               <form onSubmit={handleCreateExpense} className="space-y-3">
-                <input type="hidden" name="organisationId" value="org-placeholder" />
-                <input type="hidden" name="branchId" value="branch-placeholder" />
                 <div className="space-y-1">
                   <Label>Description *</Label>
                   <Input name="description" required placeholder="What was this expense for?" />

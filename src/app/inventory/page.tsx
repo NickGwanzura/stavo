@@ -1,14 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/db";
 import { InventoryListClient } from "./inventory-list-client";
+import { getCurrentTenant } from "@/lib/tenant";
 
 
 export const dynamic = "force-dynamic";
 
 async function getInventoryData() {
   try {
+    const tenant = await getCurrentTenant();
     const items = await prisma.inventoryItem.findMany({
-      where: { isActive: true, isAccessory: false },
+      where: { organisationId: tenant.organisationId, isActive: true, isAccessory: false },
       include: {
         brand: { select: { name: true } },
         model: { select: { name: true } },
@@ -24,7 +26,7 @@ async function getInventoryData() {
     });
 
     const accessories = await prisma.accessoryStock.findMany({
-      where: { isActive: true },
+      where: { organisationId: tenant.organisationId, isActive: true },
       include: {
         brand: { select: { name: true } },
         model: { select: { name: true } },

@@ -3,10 +3,9 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { getCurrentTenant } from "@/lib/tenant";
 
 const expenseSchema = z.object({
-  organisationId: z.string(),
-  branchId: z.string(),
   categoryId: z.string(),
   description: z.string().min(1),
   amount: z.coerce.number().positive(),
@@ -23,11 +22,18 @@ export async function createExpense(formData: FormData) {
   try {
     const raw = Object.fromEntries(formData);
     const data = expenseSchema.parse(raw);
+    const tenant = await getCurrentTenant();
+
+    const category = await prisma.expenseCategory.findFirst({
+      where: { id: data.categoryId, organisationId: tenant.organisationId, isActive: true },
+      select: { id: true },
+    });
+    if (!category) return { success: false as const, error: "Choose a valid expense category." };
 
     const expense = await prisma.expense.create({
       data: {
-        organisationId: data.organisationId,
-        branchId: data.branchId,
+        organisationId: tenant.organisationId,
+        branchId: tenant.branchId,
         categoryId: data.categoryId,
         description: data.description,
         amount: data.amount,
@@ -39,7 +45,7 @@ export async function createExpense(formData: FormData) {
         expenseDate: data.expenseDate ? new Date(data.expenseDate) : new Date(),
         notes: data.notes,
         status: "SUBMITTED",
-        createdById: "system",
+        createdById: tenant.userId ?? "system",
       },
     });
 
@@ -53,12 +59,14 @@ export async function createExpense(formData: FormData) {
   }
 }
 
-export async function approveExpense(expenseId: string, approvedById: string) {
+export async function approveExpense(expenseId: string) {
   try {
-    await prisma.expense.update({
-      where: { id: expenseId },
-      data: { status: "APPROVED", approvedById },
+    const tenant = await getCurrentTenant();
+    const updated = await prisma.expense.updateMany({
+      where: { id: expenseId, organisationId: tenant.organisationId, status: "SUBMITTED" },
+      data: { status: "APPROVED", approvedById: tenant.userId },
     });
+    if (updated.count === 0) return { success: false as const, error: "Expense was not found or was already approved." };
     revalidatePath("/expenses");
     return { success: true as const };
   } catch {

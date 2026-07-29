@@ -13,6 +13,16 @@ export const auth = betterAuth({
   user: {
     modelName: "User",
     additionalFields: {
+      organisationId: {
+        type: "string",
+        required: false,
+        input: false,
+      },
+      branchId: {
+        type: "string",
+        required: false,
+        input: false,
+      },
       phone: {
         type: "string",
         required: false,

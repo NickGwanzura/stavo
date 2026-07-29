@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
 import {
   Home,
   Package,
@@ -92,7 +93,14 @@ interface AppShellProps {
 
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  async function handleSignOut() {
+    await authClient.signOut();
+    router.replace("/auth/login");
+    router.refresh();
+  }
 
   // Don't show the app shell on auth pages
   if (pathname?.startsWith("/auth")) {
@@ -136,7 +144,11 @@ export function AppShell({ children }: AppShellProps) {
             </ul>
           </nav>
           <div className="border-t border-slate-200 pt-4">
-            <button className="flex w-full items-center gap-x-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="flex w-full items-center gap-x-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
+            >
               <LogOut className="h-5 w-5" />
               Sign Out
             </button>

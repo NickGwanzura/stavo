@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/db";
+import { getCurrentTenant } from "@/lib/tenant";
 import { InvoicesPageClient } from "./invoices-page-client";
 
 
@@ -7,7 +7,9 @@ export const dynamic = "force-dynamic";
 
 export default async function InvoicesPage() {
   try {
+    const tenant = await getCurrentTenant();
     const invoices = await prisma.invoice.findMany({
+      where: { organisationId: tenant.organisationId },
       orderBy: { createdAt: "desc" },
       take: 50,
       include: {

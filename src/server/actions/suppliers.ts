@@ -3,9 +3,9 @@
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { getCurrentTenant } from "@/lib/tenant";
 
 const supplierSchema = z.object({
-  organisationId: z.string(),
   name: z.string().min(1, "Name is required"),
   contactPerson: z.string().optional(),
   phone: z.string().min(1, "Phone is required"),
@@ -21,10 +21,11 @@ export async function createSupplier(formData: FormData) {
   try {
     const raw = Object.fromEntries(formData);
     const data = supplierSchema.parse(raw);
+    const tenant = await getCurrentTenant();
 
     const supplier = await prisma.supplier.create({
       data: {
-        organisationId: data.organisationId,
+        organisationId: tenant.organisationId,
         name: data.name,
         contactPerson: data.contactPerson,
         phone: data.phone,

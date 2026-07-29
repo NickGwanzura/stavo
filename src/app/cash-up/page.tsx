@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/db";
+import { getCurrentTenant } from "@/lib/tenant";
 import { CashUpClient } from "./cash-up-client";
 
 export const dynamic = "force-dynamic";
 
 export default async function CashUpPage() {
   try {
-    const items = await (prisma as unknown as Record<string, any>)[
-      "cashUp"
-    ].findMany({
+    const tenant = await getCurrentTenant();
+    const items = await prisma.cashUp.findMany({
+      where: { organisationId: tenant.organisationId },
       orderBy: { createdAt: "desc" },
       take: 50,
     });

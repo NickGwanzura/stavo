@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/db";
+import { getCurrentTenant } from "@/lib/tenant";
 import { ReservationsClient } from "./reservations-client";
 
 export const dynamic = "force-dynamic";
 
 export default async function ReservationsPage() {
   try {
-    const items = await (prisma as unknown as Record<string, any>)[
-      "reservations"
-    ].findMany({
+    const tenant = await getCurrentTenant();
+    const items = await prisma.customerReservation.findMany({
+      where: { organisationId: tenant.organisationId },
       orderBy: { createdAt: "desc" },
       take: 50,
     });

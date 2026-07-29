@@ -2,6 +2,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/toast";
+import { completeSale } from "@/server/actions/transactions";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,12 +21,14 @@ export default function POSPage() {
   const [items, setItems] = useState<{ id: string; name: string; price: number; qty: number }[]>([]);
   const [search, setSearch] = useState("");
   const [selectedPayment, setSelectedPayment] = useState("Cash");
+  const router = useRouter(); const { showToast } = useToast(); const [saving, setSaving] = useState(false);
 
   const total = items.reduce((s, i) => s + i.price * i.qty, 0);
 
   function addDemoItem() {
     setItems([...items, { id: Date.now().toString(), name: "Demo Phone", price: 150, qty: 1 }]);
   }
+  async function finishSale() { setSaving(true); const result = await completeSale({ items, paymentMethod: selectedPayment }); setSaving(false); if (result.success) { showToast("Sale completed", "success"); setItems([]); router.push(`/invoices/${result.invoiceId}`); } else showToast(result.error || "Sale failed", "error"); }
 
   return (
     <div className="space-y-4 pb-24">
@@ -113,9 +118,9 @@ export default function POSPage() {
                   Add Customer (optional)
                 </button>
 
-                <Button className="w-full h-12 text-base">
+                <Button onClick={finishSale} disabled={saving} className="w-full h-12 text-base">
                   <Check className="h-5 w-5 mr-2" />
-                  Complete Sale — {formatCurrency(total)}
+                  {saving ? "Completing…" : `Complete Sale — ${formatCurrency(total)}`}
                 </Button>
               </>
             )}

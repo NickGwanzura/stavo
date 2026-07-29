@@ -12,8 +12,9 @@ export default async function PurchasesPage() {
       orderBy: { createdAt: "desc" },
       take: 50,
     });
-    return <PurchasesClient items={items} />;
+    const suppliers = await prisma.supplier.findMany({ where: { organisationId: tenant.organisationId, isActive: true }, select: { id: true, name: true } });
+    return <PurchasesClient items={items} suppliers={suppliers} />;
   } catch {
-    return <PurchasesClient items={[]} />;
+    return <PurchasesClient items={[]} suppliers={[]} />;
   }
 }

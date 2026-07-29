@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -14,6 +15,10 @@ import {
   DollarSign,
   ShoppingCart,
   AlertTriangle,
+  ArrowRight,
+  ScanLine,
+  Repeat2,
+  Truck,
 } from "lucide-react";
 
 interface DashboardData {
@@ -32,7 +37,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
   const netCashMovement = data.todaySalesTotal - data.todayExpenses;
 
   return (
-    <div className="space-y-6 px-4 py-4 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-screen-2xl space-y-7 px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
@@ -119,25 +124,33 @@ export function DashboardClient({ data }: { data: DashboardData }) {
         <h2 className="mb-3 text-base font-semibold text-slate-900">
           Quick Actions
         </h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <QuickActionButton
             label="Receive Stock"
+            description="Add new items"
             href="/inventory/receive"
+            icon={Truck}
             color="blue"
           />
           <QuickActionButton
             label="New Sale"
+            description="Open point of sale"
             href="/pos"
+            icon={ShoppingCart}
             color="green"
           />
           <QuickActionButton
             label="Scan IMEI"
+            description="Find or add a device"
             href="/scan"
+            icon={ScanLine}
             color="purple"
           />
           <QuickActionButton
             label="Trade-In"
+            description="Assess a customer device"
             href="/trade-in"
+            icon={Repeat2}
             color="amber"
           />
         </div>
@@ -237,26 +250,41 @@ function StatCard({
 
 function QuickActionButton({
   label,
+  description,
   href,
+  icon: Icon,
   color,
 }: {
   label: string;
+  description: string;
   href: string;
+  icon: React.ComponentType<{ className?: string }>;
   color: string;
 }) {
   const colors: Record<string, string> = {
-    blue: "bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800",
-    green: "bg-green-600 hover:bg-green-700 active:bg-green-800",
-    purple: "bg-purple-600 hover:bg-purple-700 active:bg-purple-800",
-    amber: "bg-amber-600 hover:bg-amber-700 active:bg-amber-800",
+    blue: "bg-emerald-700 hover:bg-emerald-800 focus-visible:ring-emerald-700",
+    green: "bg-green-700 hover:bg-green-800 focus-visible:ring-green-700",
+    purple: "bg-violet-700 hover:bg-violet-800 focus-visible:ring-violet-700",
+    amber: "bg-amber-800 hover:bg-amber-900 focus-visible:ring-amber-800",
   };
 
   return (
-    <a
+    <Link
       href={href}
-      className={`flex items-center justify-center rounded-xl px-4 py-4 text-sm font-medium text-white shadow-sm transition-colors ${colors[color]}`}
+      aria-label={`${label}: ${description}`}
+      className={`group flex min-h-16 items-center gap-3 rounded-xl px-4 py-3 text-left text-white shadow-sm transition duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[0.99] ${colors[color]}`}
     >
-      {label}
-    </a>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/15">
+        <Icon className="h-5 w-5" aria-hidden="true" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-semibold">{label}</span>
+        <span className="mt-0.5 block text-xs text-white/80">{description}</span>
+      </span>
+      <ArrowRight
+        className="h-4 w-4 shrink-0 text-white/85 transition-transform duration-200 group-hover:translate-x-0.5"
+        aria-hidden="true"
+      />
+    </Link>
   );
 }

@@ -1,63 +1,11 @@
 "use client";
-
 import { useState } from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Plus, ShoppingBag } from "lucide-react";
-
-interface ItemData {
-  id: string;
-  name?: string;
-  description?: string;
-  createdAt?: Date;
-}
-
-export function PurchasesClient({ items: _items }: { items: ItemData[] }) {
-  const [search, setSearch] = useState("");
-
-  return (
-    <div className="space-y-4">
-      <PageHeader
-        title="Purchase Orders"
-        description="Track purchase orders and deliveries"
-        actions={
-          <Button className="h-10 press-feedback">
-            <Plus className="h-4 w-4 mr-2" />
-            New Purchase Order
-          </Button>
-        }
-      />
-      <div className="px-4 sm:px-6 lg:px-8 space-y-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search purchase orders..."
-            className="pl-9 h-11 press-feedback"
-          />
-        </div>
-        {_items.length === 0 ? (
-          <div className="text-center py-16">
-            <ShoppingBag className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-base font-semibold text-slate-900 mb-1">No purchase orders yet</h3>
-            <p className="text-sm text-slate-500">Create your first purchase order to get started.</p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {_items.map((item) => (
-              <Card key={item.id} className="card-hover">
-                <CardContent className="p-4">
-                  <p className="text-sm font-semibold text-slate-900">{item.name || item.description || item.id}</p>
-                  <p className="text-xs text-slate-500 mt-1">{item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+import { useToast } from "@/components/ui/toast";
+import { Plus, ShoppingBag } from "lucide-react";
+import { createPurchaseOrder } from "@/server/actions/purchases";
+export function PurchasesClient({ items, suppliers }: { items: {id:string;orderNumber?:string;createdAt?:Date}[]; suppliers: {id:string;name:string}[] }) { const [open,setOpen]=useState(false); const [saving,setSaving]=useState(false); const {showToast}=useToast(); async function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();setSaving(true);const r=await createPurchaseOrder(new FormData(e.currentTarget));setSaving(false);if(r.success){showToast("Purchase order created","success");setOpen(false);e.currentTarget.reset()}else showToast(r.error||"Unable to create order","error")}; return <div className="space-y-4"><PageHeader title="Purchase Orders" description="Track purchase orders and deliveries" actions={<Button onClick={()=>setOpen(!open)}><Plus className="h-4 w-4 mr-2"/>New Purchase Order</Button>}/><div className="px-4 sm:px-6 lg:px-8 space-y-4">{open&&<Card><CardContent className="p-4"><form onSubmit={submit} className="grid gap-3 sm:grid-cols-2"><div><Label>Supplier</Label><select name="supplierId" className="h-10 w-full rounded-lg border border-slate-300 px-3"><option value="">Unassigned</option>{suppliers.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></div><div><Label>Product</Label><Input name="productName" required/></div><div><Label>Quantity</Label><Input name="quantity" type="number" min="1" required/></div><div><Label>Expected unit price</Label><Input name="expectedPrice" type="number" step="0.01" min="0" required/></div><Button type="submit" disabled={saving}>{saving?"Saving…":"Create purchase order"}</Button></form></CardContent></Card>}<div className="space-y-2">{items.map(i=><Card key={i.id}><CardContent className="p-4 font-medium">{i.orderNumber||i.id}</CardContent></Card>)}{items.length===0&&<div className="text-center py-16"><ShoppingBag className="h-16 w-16 text-slate-300 mx-auto mb-4"/><p>No purchase orders yet</p></div>}</div></div></div>; }

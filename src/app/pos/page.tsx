@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/toast";
-import { completeSale } from "@/server/actions/transactions";
+import { completeSale, getSellableInventory } from "@/server/actions/transactions";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,15 +18,20 @@ const paymentMethods = [
 ];
 
 export default function POSPage() {
-  const [items, setItems] = useState<{ id: string; name: string; price: number; qty: number }[]>([]);
+  const [items, setItems] = useState<{ id?: string; name: string; price: number; qty: number }[]>([]);
+  const [inventory, setInventory] = useState<{ id: string; name: string; price: number }[]>([]);
   const [search, setSearch] = useState("");
   const [selectedPayment, setSelectedPayment] = useState("Cash");
   const router = useRouter(); const { showToast } = useToast(); const [saving, setSaving] = useState(false);
 
   const total = items.reduce((s, i) => s + i.price * i.qty, 0);
 
-  function addDemoItem() {
-    setItems([...items, { id: Date.now().toString(), name: "Demo Phone", price: 150, qty: 1 }]);
+  useEffect(() => { getSellableInventory().then(setInventory).catch(() => showToast("Unable to load inventory", "error")); }, [showToast]);
+
+  function addItem(item: { id: string; name: string; price: number }) {
+    if (!item.price) { showToast("Set a cash price before selling this item", "error"); return; }
+    if (items.some((cartItem) => cartItem.id === item.id)) return;
+    setItems([...items, { ...item, qty: 1 }]);
   }
   async function finishSale() { setSaving(true); const result = await completeSale({ items, paymentMethod: selectedPayment }); setSaving(false); if (result.success) { showToast("Sale completed", "success"); setItems([]); router.push(`/invoices/${result.invoiceId}`); } else showToast(result.error || "Sale failed", "error"); }
 
@@ -51,10 +56,13 @@ export default function POSPage() {
           </Button>
         </div>
 
-        {/* Quick add demo item */}
-        <Button onClick={addDemoItem} variant="outline" className="w-full h-12">
+        <div className="space-y-2 max-h-44 overflow-y-auto rounded-xl border border-slate-200 bg-white p-2">
+          {inventory.filter((item) => item.name.toLowerCase().includes(search.toLowerCase())).map((item) => <button key={item.id} onClick={() => addItem(item)} className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left hover:bg-slate-50"><span className="text-sm font-medium">{item.name}</span><span className="text-sm">{formatCurrency(item.price)}</span></button>)}
+          {inventory.length === 0 && <p className="p-3 text-center text-sm text-slate-500">No sellable stock available.</p>}
+        </div>
+        <Button onClick={() => inventory[0] && addItem(inventory[0])} variant="outline" className="w-full h-12">
           <ShoppingCart className="h-5 w-5 mr-2" />
-          Add Item
+          Add First In-Stock Item
         </Button>
 
         {/* Cart */}
@@ -78,7 +86,7 @@ export default function POSPage() {
                   <span className="text-sm font-semibold text-slate-900 mr-3">
                     {formatCurrency(item.price * item.qty)}
                   </span>
-                  <button className="text-slate-400 hover:text-red-600">
+                  <button onClick={() => setItems(items.filter((cartItem) => cartItem.id !== item.id))} className="text-slate-400 hover:text-red-600">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>

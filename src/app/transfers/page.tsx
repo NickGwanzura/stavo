@@ -12,8 +12,9 @@ export default async function TransfersPage() {
       orderBy: { createdAt: "desc" },
       take: 50,
     });
-    return <TransfersClient items={items} />;
+    const branches = await prisma.branch.findMany({ where: { organisationId: tenant.organisationId, isActive: true }, select: { id: true, name: true } });
+    return <TransfersClient items={items} branches={branches} />;
   } catch {
-    return <TransfersClient items={[]} />;
+    return <TransfersClient items={[]} branches={[]} />;
   }
 }

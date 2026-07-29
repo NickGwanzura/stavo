@@ -38,9 +38,9 @@ export function InvoicesPageClient({ invoices }: { invoices: InvoiceData[] }) {
       <div className="px-4 sm:px-6 lg:px-8">
         {invoices.length === 0 ? (
           <div className="text-center py-16">
-            <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-base font-semibold text-gray-900 mb-1">No invoices yet</h3>
-            <p className="text-sm text-gray-500 mb-4">Create your first invoice from the Point of Sale.</p>
+            <FileText className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+            <h3 className="text-base font-semibold text-slate-900 mb-1">No invoices yet</h3>
+            <p className="text-sm text-slate-500 mb-4">Create your first invoice from the Point of Sale.</p>
             <Link href="/pos">
               <Button>Create Invoice</Button>
             </Link>
@@ -49,17 +49,17 @@ export function InvoicesPageClient({ invoices }: { invoices: InvoiceData[] }) {
           <div className="grid gap-3 lg:hidden">
             {invoices.map((inv) => (
               <Link key={inv.id} href={`/invoices/${inv.id}`}>
-                <div className="rounded-xl border border-gray-200 bg-white p-4">
+                <div className="rounded-xl border border-slate-200 bg-white p-4">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">{inv.invoiceNumber}</p>
-                      <p className="text-xs text-gray-500">{inv.customerName}</p>
+                      <p className="text-sm font-semibold text-slate-900">{inv.invoiceNumber}</p>
+                      <p className="text-xs text-slate-500">{inv.customerName}</p>
                     </div>
                     <StatusBadge status={inv.status} />
                   </div>
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center justify-between text-xs text-slate-500">
                     <span>{formatDate(inv.date)}</span>
-                    <span className="font-semibold text-gray-900">{formatCurrency(inv.total)}</span>
+                    <span className="font-semibold text-slate-900">{formatCurrency(inv.total)}</span>
                   </div>
                 </div>
               </Link>
@@ -68,29 +68,29 @@ export function InvoicesPageClient({ invoices }: { invoices: InvoiceData[] }) {
         )}
 
         {invoices.length > 0 && (
-          <div className="hidden lg:block rounded-xl border border-gray-200 bg-white overflow-hidden">
+          <div className="hidden lg:block rounded-xl border border-slate-200 bg-white overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Invoice</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Customer</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Date</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Total</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 uppercase">Balance</th>
+                <tr className="border-b border-slate-200 bg-slate-50">
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Invoice</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Customer</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Status</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 uppercase">Date</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-slate-500 uppercase">Total</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-slate-500 uppercase">Balance</th>
                 </tr>
               </thead>
               <tbody>
                 {invoices.map((inv) => (
-                  <tr key={inv.id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <tr key={inv.id} className="border-b border-slate-100 hover:bg-slate-50">
                     <td className="px-4 py-3">
-                      <Link href={`/invoices/${inv.id}`} className="text-sm font-medium text-blue-600 hover:underline">
+                      <Link href={`/invoices/${inv.id}`} className="text-sm font-medium text-emerald-600 hover:underline">
                         {inv.invoiceNumber}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{inv.customerName}</td>
+                    <td className="px-4 py-3 text-sm text-slate-900">{inv.customerName}</td>
                     <td className="px-4 py-3"><StatusBadge status={inv.status} /></td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{formatDate(inv.date)}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600">{formatDate(inv.date)}</td>
                     <td className="px-4 py-3 text-sm font-semibold text-right">{formatCurrency(inv.total)}</td>
                     <td className="px-4 py-3 text-sm text-right text-red-600">{inv.balanceDue > 0 ? formatCurrency(inv.balanceDue) : "—"}</td>
                   </tr>

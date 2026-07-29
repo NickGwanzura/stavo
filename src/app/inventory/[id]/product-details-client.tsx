@@ -106,23 +106,23 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
   return (
     <div className="pb-24">
       {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-200 z-10">
+      <div className="sticky top-0 bg-white border-b border-slate-200 z-10">
         <div className="flex items-center gap-3 px-4 h-14">
-          <Link href="/inventory" className="text-gray-500 hover:text-gray-700">
+          <Link href="/inventory" className="text-slate-500 hover:text-slate-700">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div className="flex-1 min-w-0">
-            <h1 className="text-sm font-semibold text-gray-900 truncate">
+            <h1 className="text-sm font-semibold text-slate-900 truncate">
               {product.productName}
             </h1>
-            <p className="text-xs text-gray-500">{product.stockNumber}</p>
+            <p className="text-xs text-slate-500">{product.stockNumber}</p>
           </div>
           <StatusBadge status={product.status} />
         </div>
       </div>
 
       {/* Mobile Sticky Actions */}
-      <div className="sticky top-14 bg-white border-b border-gray-200 z-10 px-4 py-2">
+      <div className="sticky top-14 bg-white border-b border-slate-200 z-10 px-4 py-2">
         <div className="flex gap-2 overflow-x-auto pb-1">
           {product.status === "IN_STOCK" && (
             <>
@@ -154,15 +154,15 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 px-4 py-3 bg-gray-50 border-b border-gray-200 overflow-x-auto">
+      <div className="flex gap-1 px-4 py-3 bg-slate-50 border-b border-slate-200 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
               activeTab === tab.id
-                ? "bg-blue-600 text-white"
-                : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-100"
+                ? "bg-emerald-600 text-white"
+                : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
             }`}
           >
             <tab.icon className="h-3.5 w-3.5" />
@@ -177,8 +177,8 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
           {/* Main Info Card */}
           <Card>
             <CardContent className="p-4 space-y-3">
-              <div className="flex items-center justify-center h-32 bg-gray-100 rounded-lg mb-2">
-                <Smartphone className="h-16 w-16 text-gray-400" />
+              <div className="flex items-center justify-center h-32 bg-slate-100 rounded-lg mb-2">
+                <Smartphone className="h-16 w-16 text-slate-400" />
               </div>
               <DetailRow label="Brand" value={product.brand} />
               <DetailRow label="Model" value={product.model} />
@@ -195,7 +195,7 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
           {/* Identifiers Card */}
           <Card>
             <CardContent className="p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Identifiers</h3>
+              <h3 className="text-sm font-semibold text-slate-900 mb-3">Identifiers</h3>
               <div className="space-y-2">
                 <DetailRow label="IMEI 1" value={imei1?.value} mono />
                 <DetailRow label="IMEI 2" value={imei2?.value} mono />
@@ -208,7 +208,7 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
           {/* Location Card */}
           <Card>
             <CardContent className="p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Location</h3>
+              <h3 className="text-sm font-semibold text-slate-900 mb-3">Location</h3>
               <DetailRow label="Branch" value={product.branch} />
               <DetailRow label="Shelf" value={product.shelfLocation} />
               <DetailRow label="Box" value={product.boxIncluded ? "Yes" : "No"} />
@@ -219,8 +219,8 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
           {product.notes && (
             <Card>
               <CardContent className="p-4">
-                <h3 className="text-sm font-semibold text-gray-900 mb-2">Notes</h3>
-                <p className="text-sm text-gray-700 whitespace-pre-wrap">{product.notes}</p>
+                <h3 className="text-sm font-semibold text-slate-900 mb-2">Notes</h3>
+                <p className="text-sm text-slate-700 whitespace-pre-wrap">{product.notes}</p>
               </CardContent>
             </Card>
           )}
@@ -232,7 +232,7 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
         <div className="px-4 py-4 space-y-4">
           <Card>
             <CardContent className="p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Selling Prices</h3>
+              <h3 className="text-sm font-semibold text-slate-900 mb-3">Selling Prices</h3>
               <div className="space-y-3">
                 {cashPrice && (
                   <PriceRow label="Cash Price" amount={cashPrice.amount} primary />
@@ -252,12 +252,12 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
 
           <Card>
             <CardContent className="p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Cost Breakdown</h3>
+              <h3 className="text-sm font-semibold text-slate-900 mb-3">Cost Breakdown</h3>
               <div className="space-y-2">
                 {product.acquisition?.costs.map((cost, idx) => (
                   <DetailRow key={idx} label={cost.type.replace(/_/g, " ")} value={formatCurrency(cost.amount)} />
                 ))}
-                <div className="pt-2 border-t border-gray-100">
+                <div className="pt-2 border-t border-slate-100">
                   <DetailRow label="Total Landed Cost" value={formatCurrency(totalCost)} />
                 </div>
               </div>
@@ -267,7 +267,7 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
           {product.acquisition && (
             <Card>
               <CardContent className="p-4">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">Acquisition</h3>
+                <h3 className="text-sm font-semibold text-slate-900 mb-3">Acquisition</h3>
                 <DetailRow label="Source" value={product.acquisition.sourceName || product.acquisition.supplierName} />
                 <DetailRow label="Date" value={formatDate(product.acquisition.purchaseDate)} />
                 <DetailRow label="Type" value={product.acquisition.type.replace(/_/g, " ")} />
@@ -276,8 +276,8 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
           )}
 
           {expectedProfit !== null && (
-            <Card className={`border ${expectedProfit >= 0 ? "border-green-200" : "border-red-200"}`}>
-              <CardContent className={`p-4 ${expectedProfit >= 0 ? "bg-green-50" : "bg-red-50"}`}>
+            <Card className={`border ${expectedProfit >= 0 ? "border-emerald-200" : "border-red-200"}`}>
+              <CardContent className={`p-4 ${expectedProfit >= 0 ? "bg-emerald-50" : "bg-red-50"}`}>
                 <h3 className="text-sm font-semibold mb-2">Profit Analysis</h3>
                 <DetailRow label="Expected Profit" value={formatCurrency(expectedProfit)} />
                 <DetailRow label="Margin" value={margin !== null ? `${margin.toFixed(1)}%` : "—"} />
@@ -293,8 +293,8 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
           {product.tests.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
-                <TestTube className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm text-gray-500">No test records</p>
+                <TestTube className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-sm text-slate-500">No test records</p>
                 <Button variant="outline" size="sm" className="mt-3">Test Device</Button>
               </CardContent>
             </Card>
@@ -308,11 +308,11 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
                   </div>
                   {test.finalGrade && <DetailRow label="Final Grade" value={test.finalGrade} />}
                   {test.technicianNotes && (
-                    <p className="text-sm text-gray-600">{test.technicianNotes}</p>
+                    <p className="text-sm text-slate-600">{test.technicianNotes}</p>
                   )}
                   {test.issues.length > 0 && (
                     <div>
-                      <p className="text-xs font-medium text-gray-500 mb-1">Issues:</p>
+                      <p className="text-xs font-medium text-slate-500 mb-1">Issues:</p>
                       {test.issues.map((issue, idx) => (
                         <span key={idx} className="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs text-red-700 mr-1 mb-1">
                           {issue.issue}
@@ -333,8 +333,8 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
           {product.repairs.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
-                <Wrench className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm text-gray-500">No repair records</p>
+                <Wrench className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-sm text-slate-500">No repair records</p>
               </CardContent>
             </Card>
           ) : (
@@ -360,7 +360,7 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
           {product.warranty && (
             <Card>
               <CardContent className="p-4">
-                <h3 className="text-sm font-semibold text-gray-900 mb-3">Warranty</h3>
+                <h3 className="text-sm font-semibold text-slate-900 mb-3">Warranty</h3>
                 <DetailRow label="Start" value={formatDate(product.warranty.startDate)} />
                 <DetailRow label="Expiry" value={formatDate(product.warranty.expiryDate)} />
                 <DetailRow label="Terms" value={product.warranty.terms} />
@@ -380,7 +380,7 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
 
           <Card>
             <CardContent className="p-4">
-              <h3 className="text-sm font-semibold text-gray-900 mb-3">Timeline</h3>
+              <h3 className="text-sm font-semibold text-slate-900 mb-3">Timeline</h3>
               <DetailRow label="Created" value={formatDateTime(product.createdAt)} />
               <DetailRow label="Last Updated" value={formatDateTime(product.updatedAt)} />
               {product.acquisition && (
@@ -397,25 +397,25 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
           {product.movements.length === 0 ? (
             <Card>
               <CardContent className="p-8 text-center">
-                <Truck className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm text-gray-500">No stock movements</p>
+                <Truck className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-sm text-slate-500">No stock movements</p>
               </CardContent>
             </Card>
           ) : (
             product.movements.map((movement, idx) => (
               <div key={idx} className="flex items-start gap-3">
                 <div className="flex flex-col items-center">
-                  <div className="h-2 w-2 rounded-full bg-blue-600 mt-2" />
-                  {idx < product.movements.length - 1 && <div className="w-0.5 flex-1 bg-gray-200 my-1" />}
+                  <div className="h-2 w-2 rounded-full bg-emerald-600 mt-2" />
+                  {idx < product.movements.length - 1 && <div className="w-0.5 flex-1 bg-slate-200 my-1" />}
                 </div>
                 <Card className="flex-1">
                   <CardContent className="p-3">
-                    <p className="text-sm font-medium text-gray-900 capitalize">{movement.type.toLowerCase()}</p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-sm font-medium text-slate-900 capitalize">{movement.type.toLowerCase()}</p>
+                    <p className="text-xs text-slate-500 mt-1">
                       {movement.fromLocation && `From: ${movement.fromLocation}`}
                       {movement.toLocation && ` → ${movement.toLocation}`}
                     </p>
-                    <p className="text-xs text-gray-400 mt-0.5">{formatDateTime(movement.createdAt)}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{formatDateTime(movement.createdAt)}</p>
                   </CardContent>
                 </Card>
               </div>
@@ -431,8 +431,8 @@ function DetailRow({ label, value, mono }: { label: string; value: string | null
   if (!value) return null;
   return (
     <div className="flex items-center justify-between">
-      <span className="text-xs text-gray-500">{label}</span>
-      <span className={`text-sm text-gray-900 ${mono ? "font-mono" : "font-medium"}`}>
+      <span className="text-xs text-slate-500">{label}</span>
+      <span className={`text-sm text-slate-900 ${mono ? "font-mono" : "font-medium"}`}>
         {value}
       </span>
     </div>
@@ -442,8 +442,8 @@ function DetailRow({ label, value, mono }: { label: string; value: string | null
 function PriceRow({ label, amount, primary }: { label: string; amount: number; primary?: boolean }) {
   return (
     <div className="flex items-center justify-between py-1">
-      <span className="text-sm text-gray-600">{label}</span>
-      <span className={`${primary ? "text-lg font-bold text-gray-900" : "text-sm font-medium text-gray-900"}`}>
+      <span className="text-sm text-slate-600">{label}</span>
+      <span className={`${primary ? "text-lg font-bold text-slate-900" : "text-sm font-medium text-slate-900"}`}>
         {formatCurrency(amount)}
       </span>
     </div>

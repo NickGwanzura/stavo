@@ -100,15 +100,15 @@ export function AppShell({ children }: AppShellProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex flex-col gap-y-5 border-r border-gray-200 bg-white px-4 pb-4 pt-4 h-full">
+        <div className="flex flex-col gap-y-5 border-r border-slate-200 bg-white px-4 pb-4 pt-4 h-full">
           <div className="flex items-center gap-x-3 px-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600">
               <span className="text-lg font-bold text-white">CD</span>
             </div>
-            <span className="text-lg font-semibold text-gray-900">
+            <span className="text-lg font-semibold text-slate-900">
               CellDealer
             </span>
           </div>
@@ -123,8 +123,8 @@ export function AppShell({ children }: AppShellProps) {
                       className={cn(
                         "flex items-center gap-x-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                         isActive
-                          ? "bg-blue-50 text-blue-700"
-                          : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                          ? "bg-emerald-50 text-emerald-700"
+                          : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
                       )}
                     >
                       <item.icon className="h-5 w-5 shrink-0" />
@@ -135,8 +135,8 @@ export function AppShell({ children }: AppShellProps) {
               })}
             </ul>
           </nav>
-          <div className="border-t border-gray-200 pt-4">
-            <button className="flex w-full items-center gap-x-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100">
+          <div className="border-t border-slate-200 pt-4">
+            <button className="flex w-full items-center gap-x-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">
               <LogOut className="h-5 w-5" />
               Sign Out
             </button>
@@ -159,11 +159,11 @@ export function AppShell({ children }: AppShellProps) {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex items-center justify-between border-b border-gray-200 px-4 py-4">
-          <span className="text-lg font-semibold text-gray-900">Menu</span>
+        <div className="flex items-center justify-between border-b border-slate-200 px-4 py-4">
+          <span className="text-lg font-semibold text-slate-900">Menu</span>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100"
+            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"
           >
             <X className="h-5 w-5" />
           </button>
@@ -179,8 +179,8 @@ export function AppShell({ children }: AppShellProps) {
                 className={cn(
                   "flex items-center gap-x-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-gray-700 hover:bg-gray-100"
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "text-slate-700 hover:bg-slate-100"
                 )}
               >
                 <item.icon className="h-5 w-5 shrink-0" />
@@ -194,15 +194,15 @@ export function AppShell({ children }: AppShellProps) {
       {/* Main Content */}
       <div className="lg:pl-64">
         {/* Top Bar (Mobile) */}
-        <header className="sticky top-0 z-20 border-b border-gray-200 bg-white lg:hidden">
+        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white lg:hidden">
           <div className="flex items-center justify-between px-4 h-14">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="rounded-lg p-2 text-gray-500 hover:bg-gray-100"
+              className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"
             >
               <Menu className="h-6 w-6" />
             </button>
-            <span className="text-base font-semibold text-gray-900">
+            <span className="text-base font-semibold text-slate-900">
               CellDealer
             </span>
             <div className="w-10" /> {/* Spacer */}
@@ -210,10 +210,10 @@ export function AppShell({ children }: AppShellProps) {
         </header>
 
         {/* Page Content */}
-        <main className="pb-20 lg:pb-8">{children}</main>
+        <main className="pb-safe lg:pb-8">{children}</main>
 
         {/* Bottom Navigation (Mobile) */}
-        <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-gray-200 bg-white lg:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-slate-200 bg-white lg:hidden">
           <div className="flex items-center justify-around h-16 px-2">
             {bottomNavItems.map((item) => {
               const isActive = pathname === item.href;
@@ -222,7 +222,12 @@ export function AppShell({ children }: AppShellProps) {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className="relative -mt-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-colors hover:bg-blue-700 active:bg-blue-800"
+                    className={cn(
+                      "relative -mt-4 flex h-14 w-14 items-center justify-center rounded-full transition-colors shadow-lg",
+                      isActive
+                        ? "bg-emerald-800 ring-4 ring-emerald-200"
+                        : "bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800"
+                    )}
                   >
                     <item.icon className="h-6 w-6" />
                   </Link>
@@ -235,8 +240,8 @@ export function AppShell({ children }: AppShellProps) {
                   className={cn(
                     "flex flex-col items-center gap-y-0.5 px-3 py-1 text-[10px] font-medium transition-colors",
                     isActive
-                      ? "text-blue-600"
-                      : "text-gray-500 hover:text-gray-700"
+                      ? "text-emerald-600"
+                      : "text-slate-500 hover:text-slate-700"
                   )}
                 >
                   <item.icon className="h-6 w-6" />

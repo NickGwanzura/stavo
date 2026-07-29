@@ -47,9 +47,9 @@ export default function PlaceholderPage() {
     <div className="space-y-4">
       <PageHeader title={title} description={desc} />
       <div className="px-4 sm:px-6 lg:px-8 text-center py-16">
-        <Icon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-        <h3 className="text-base font-semibold text-gray-900 mb-1">Coming Soon</h3>
-        <p className="text-sm text-gray-500">This module is under development.</p>
+        <Icon className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+        <h3 className="text-base font-semibold text-slate-900 mb-1">Coming Soon</h3>
+        <p className="text-sm text-slate-500">This module is under development.</p>
       </div>
     </div>
   );

@@ -11,31 +11,29 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-slate-50 text-slate-900;
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Mobile-friendly touch targets */
   button, a, input, select, textarea {
     @apply touch-manipulation;
   }
 
-  /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100;
+    @apply bg-slate-100;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full;
+    @apply bg-slate-300 rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
+    @apply bg-slate-400;
   }
 }
 
@@ -43,14 +41,42 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Safe area for mobile devices with gesture nav */
+  .pb-safe {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Press feedback for touch interactions */
+  .press-feedback {
+    @apply active:scale-[0.98] transition-transform duration-150;
+  }
+
+  .card-hover {
+    @apply cursor-pointer hover:bg-slate-50 active:bg-slate-100 active:scale-[0.98] transition-all duration-150;
+  }
 }
 
-/* Print styles for labels and receipts */
+/* Print styles */
 @media print {
   body {
     @apply bg-white;
   }
   .no-print {
     display: none !important;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

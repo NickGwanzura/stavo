@@ -38,12 +38,12 @@ const menuItems = [
 ];
 
 const colorMap: Record<string, string> = {
-  blue: "bg-blue-50 text-blue-700",
+  blue: "bg-emerald-50 text-emerald-700",
   green: "bg-green-50 text-green-700",
   purple: "bg-purple-50 text-purple-700",
   red: "bg-red-50 text-red-700",
   amber: "bg-amber-50 text-amber-700",
-  gray: "bg-gray-50 text-gray-700",
+  gray: "bg-slate-50 text-slate-700",
 };
 
 export default function MorePage() {
@@ -57,7 +57,7 @@ export default function MorePage() {
             <Link
               key={item.href}
               href={item.href}
-              className="flex flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white p-4 text-sm font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-colors"
+              className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white p-4 text-sm font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-colors"
             >
               <div className={`rounded-lg p-2.5 ${colorMap[item.color]}`}>
                 <item.icon className="h-5 w-5" />

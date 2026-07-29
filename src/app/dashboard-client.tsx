@@ -35,8 +35,8 @@ export function DashboardClient({ data }: { data: DashboardData }) {
     <div className="space-y-6 px-4 py-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+        <p className="mt-1 text-sm text-slate-500">
           Today&apos;s overview of your business
         </p>
       </div>
@@ -71,7 +71,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
 
       {/* Stock Stats */}
       <div>
-        <h2 className="mb-3 text-base font-semibold text-gray-900">
+        <h2 className="mb-3 text-base font-semibold text-slate-900">
           Inventory Overview
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -116,7 +116,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
 
       {/* Quick Actions */}
       <div>
-        <h2 className="mb-3 text-base font-semibold text-gray-900">
+        <h2 className="mb-3 text-base font-semibold text-slate-900">
           Quick Actions
         </h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -173,13 +173,13 @@ function DashboardCard({
   variant: "default" | "success" | "destructive";
 }) {
   const borderColor = {
-    default: "border-blue-200",
+    default: "border-emerald-200",
     success: "border-green-200",
     destructive: "border-red-200",
   }[variant];
 
   const iconBg = {
-    default: "bg-blue-100 text-blue-700",
+    default: "bg-emerald-100 text-emerald-700",
     success: "bg-green-100 text-green-700",
     destructive: "bg-red-100 text-red-700",
   }[variant];
@@ -189,8 +189,8 @@ function DashboardCard({
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <p className="text-xs font-medium text-gray-500">{title}</p>
-            <p className="text-lg font-bold text-gray-900">{value}</p>
+            <p className="text-xs font-medium text-slate-500">{title}</p>
+            <p className="text-lg font-bold text-slate-900">{value}</p>
           </div>
           <div className={`rounded-lg p-2 ${iconBg}`}>
             <Icon className="h-5 w-5" />
@@ -213,11 +213,11 @@ function StatCard({
   color: string;
 }) {
   const colors: Record<string, string> = {
-    blue: "bg-blue-50 text-blue-700 border-blue-200",
+    blue: "bg-emerald-50 text-emerald-700 border-emerald-200",
     green: "bg-green-50 text-green-700 border-green-200",
     amber: "bg-amber-50 text-amber-700 border-amber-200",
     purple: "bg-purple-50 text-purple-700 border-purple-200",
-    gray: "bg-gray-50 text-gray-700 border-gray-200",
+    gray: "bg-slate-50 text-slate-700 border-slate-200",
   };
 
   return (
@@ -227,7 +227,7 @@ function StatCard({
           <Icon className="h-5 w-5" />
         </div>
         <div>
-          <p className="text-xs text-gray-500">{label}</p>
+          <p className="text-xs text-slate-500">{label}</p>
           <p className="text-lg font-bold">{value}</p>
         </div>
       </CardContent>
@@ -245,7 +245,7 @@ function QuickActionButton({
   color: string;
 }) {
   const colors: Record<string, string> = {
-    blue: "bg-blue-600 hover:bg-blue-700 active:bg-blue-800",
+    blue: "bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800",
     green: "bg-green-600 hover:bg-green-700 active:bg-green-800",
     purple: "bg-purple-600 hover:bg-purple-700 active:bg-purple-800",
     amber: "bg-amber-600 hover:bg-amber-700 active:bg-amber-800",

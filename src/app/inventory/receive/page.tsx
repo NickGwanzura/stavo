@@ -169,10 +169,10 @@ export default function ReceiveInventoryPage() {
                 onClick={() => setCurrentStep(idx)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
                   isActive
-                    ? "bg-blue-600 text-white"
+                    ? "bg-emerald-600 text-white"
                     : isDone
                     ? "bg-green-100 text-green-700"
-                    : "bg-gray-100 text-gray-500"
+                    : "bg-slate-100 text-slate-500"
                 }`}
               >
                 <step.icon className="h-3.5 w-3.5" />
@@ -200,8 +200,8 @@ export default function ReceiveInventoryPage() {
                     onClick={() => updateField("acquisitionType", type.value)}
                     className={`w-full text-left px-4 py-3 rounded-lg border text-sm font-medium transition-colors ${
                       formData.acquisitionType === type.value
-                        ? "border-blue-500 bg-blue-50 text-blue-700"
-                        : "border-gray-200 bg-white text-gray-700 hover:border-gray-300"
+                        ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                        : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
                     }`}
                   >
                     {type.label}
@@ -225,8 +225,8 @@ export default function ReceiveInventoryPage() {
                       onClick={() => updateField("brand", b)}
                       className={`px-3 py-1.5 rounded-lg border text-xs font-medium ${
                         formData.brand === b
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-gray-200 text-gray-600 hover:border-gray-300"
+                          ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                          : "border-slate-200 text-slate-600 hover:border-slate-300"
                       }`}
                     >
                       {b}
@@ -282,7 +282,7 @@ export default function ReceiveInventoryPage() {
                     id="sim"
                     value={formData.simConfig as string}
                     onChange={(e) => updateField("simConfig", e.target.value)}
-                    className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm"
+                    className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
                   >
                     <option>Single SIM</option>
                     <option>Dual SIM</option>
@@ -299,7 +299,7 @@ export default function ReceiveInventoryPage() {
                     id="network"
                     value={formData.networkStatus as string}
                     onChange={(e) => updateField("networkStatus", e.target.value)}
-                    className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm"
+                    className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
                   >
                     <option>Unlocked</option>
                     <option>Network Locked</option>
@@ -312,7 +312,7 @@ export default function ReceiveInventoryPage() {
                     id="condition"
                     value={formData.condition as string}
                     onChange={(e) => updateField("condition", e.target.value)}
-                    className="flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm"
+                    className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
                   >
                     {conditions.map((c) => (
                       <option key={c}>{c}</option>
@@ -327,7 +327,7 @@ export default function ReceiveInventoryPage() {
                     type="checkbox"
                     checked={formData.boxIncluded as boolean}
                     onChange={(e) => updateField("boxIncluded", e.target.checked)}
-                    className="rounded border-gray-300"
+                    className="rounded border-slate-300"
                   />
                   Box Included
                 </label>
@@ -336,7 +336,7 @@ export default function ReceiveInventoryPage() {
                     type="checkbox"
                     checked={formData.chargerIncluded as boolean}
                     onChange={(e) => updateField("chargerIncluded", e.target.checked)}
-                    className="rounded border-gray-300"
+                    className="rounded border-slate-300"
                   />
                   Charger Included
                 </label>
@@ -446,10 +446,10 @@ export default function ReceiveInventoryPage() {
                   />
                 </div>
               </div>
-              <div className="rounded-lg bg-gray-50 p-3">
-                <p className="text-sm text-gray-600">
+              <div className="rounded-lg bg-slate-50 p-3">
+                <p className="text-sm text-slate-600">
                   Landed Cost:{" "}
-                  <span className="font-bold text-gray-900">
+                  <span className="font-bold text-slate-900">
                     ${(formData.purchasePrice as number).toFixed(2)}
                   </span>
                 </p>
@@ -509,20 +509,20 @@ export default function ReceiveInventoryPage() {
         {currentStep === 5 && (
           <Card>
             <CardContent className="p-4 space-y-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-slate-600">
                 Take photos of the device, IMEI, box, and accessories.
               </p>
               <div className="grid grid-cols-3 gap-3">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <button
                     key={i}
-                    className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-blue-400 hover:text-blue-500 transition-colors"
+                    className="aspect-square rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400 hover:border-emerald-400 hover:text-emerald-500 transition-colors"
                   >
                     <Camera className="h-8 w-8" />
                   </button>
                 ))}
               </div>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-slate-400">
                 Photos can also be added later from the product page.
               </p>
             </CardContent>
@@ -533,30 +533,30 @@ export default function ReceiveInventoryPage() {
         {currentStep === 6 && (
           <Card>
             <CardContent className="p-4 space-y-4">
-              <h3 className="font-semibold text-gray-900">Review & Confirm</h3>
+              <h3 className="font-semibold text-slate-900">Review & Confirm</h3>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-gray-500">Type</span>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">Type</span>
                   <span className="font-medium">{formData.acquisitionType as string}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-gray-500">Brand</span>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">Brand</span>
                   <span className="font-medium">{formData.brand || "—"}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-gray-500">Model</span>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">Model</span>
                   <span className="font-medium">{formData.model || "—"}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-gray-500">IMEI 1</span>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">IMEI 1</span>
                   <span className="font-mono font-medium">{imei1 || "—"}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-gray-500">Purchase Price</span>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">Purchase Price</span>
                   <span className="font-medium">${(formData.purchasePrice as number).toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-gray-100">
-                  <span className="text-gray-500">Cash Price</span>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">Cash Price</span>
                   <span className="font-medium">${(formData.cashPrice as number).toFixed(2)}</span>
                 </div>
               </div>

@@ -32,7 +32,7 @@ export default function POSPage() {
         {/* Search/Scan */}
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -54,25 +54,25 @@ export default function POSPage() {
         {/* Cart */}
         <Card>
           <CardContent className="p-4 space-y-3">
-            <h3 className="text-sm font-semibold text-gray-900">Cart ({items.length})</h3>
+            <h3 className="text-sm font-semibold text-slate-900">Cart ({items.length})</h3>
 
             {items.length === 0 ? (
               <div className="text-center py-8">
-                <ShoppingCart className="h-12 w-12 text-gray-300 mx-auto mb-2" />
-                <p className="text-sm text-gray-500">Cart is empty</p>
-                <p className="text-xs text-gray-400 mt-1">Search or scan a product to add</p>
+                <ShoppingCart className="h-12 w-12 text-slate-300 mx-auto mb-2" />
+                <p className="text-sm text-slate-500">Cart is empty</p>
+                <p className="text-xs text-slate-400 mt-1">Search or scan a product to add</p>
               </div>
             ) : (
               items.map((item) => (
-                <div key={item.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                <div key={item.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
                   <div className="flex-1 min-w-0 mr-3">
-                    <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
-                    <p className="text-xs text-gray-500">x{item.qty} · {formatCurrency(item.price)}</p>
+                    <p className="text-sm font-medium text-slate-900 truncate">{item.name}</p>
+                    <p className="text-xs text-slate-500">x{item.qty} · {formatCurrency(item.price)}</p>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900 mr-3">
+                  <span className="text-sm font-semibold text-slate-900 mr-3">
                     {formatCurrency(item.price * item.qty)}
                   </span>
-                  <button className="text-gray-400 hover:text-red-600">
+                  <button className="text-slate-400 hover:text-red-600">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -81,14 +81,14 @@ export default function POSPage() {
 
             {items.length > 0 && (
               <>
-                <div className="flex justify-between pt-2 border-t border-gray-200">
-                  <span className="text-base font-bold text-gray-900">Total</span>
-                  <span className="text-xl font-bold text-gray-900">{formatCurrency(total)}</span>
+                <div className="flex justify-between pt-2 border-t border-slate-200">
+                  <span className="text-base font-bold text-slate-900">Total</span>
+                  <span className="text-xl font-bold text-slate-900">{formatCurrency(total)}</span>
                 </div>
 
                 {/* Payment Method */}
                 <div>
-                  <p className="text-xs font-medium text-gray-500 mb-2">Payment Method</p>
+                  <p className="text-xs font-medium text-slate-500 mb-2">Payment Method</p>
                   <div className="flex flex-wrap gap-2">
                     {paymentMethods.map((pm) => (
                       <button
@@ -96,8 +96,8 @@ export default function POSPage() {
                         onClick={() => setSelectedPayment(pm)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
                           selectedPayment === pm
-                            ? "border-blue-500 bg-blue-50 text-blue-700"
-                            : "border-gray-200 text-gray-600 hover:border-gray-300"
+                            ? "border-emerald-500 bg-emerald-50 text-emerald-700"
+                            : "border-slate-200 text-slate-600 hover:border-slate-300"
                         }`}
                       >
                         {pm}
@@ -107,7 +107,7 @@ export default function POSPage() {
                 </div>
 
                 {/* Customer */}
-                <button className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg border border-dashed border-gray-300 text-sm text-gray-500 hover:border-gray-400">
+                <button className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg border border-dashed border-slate-300 text-sm text-slate-500 hover:border-slate-400">
                   <User className="h-4 w-4" />
                   Add Customer (optional)
                 </button>

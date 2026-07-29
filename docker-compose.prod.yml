@@ -1,0 +1,79 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cellphone-dealer-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "${DATABASE_URL}"
+      DIRECT_URL: "${DIRECT_URL}"
+      AUTH_SECRET: "${AUTH_SECRET}"
+      NEXT_PUBLIC_APP_URL: "${NEXT_PUBLIC_APP_URL}"
+      STORAGE_ENDPOINT: "${STORAGE_ENDPOINT}"
+      STORAGE_REGION: "${STORAGE_REGION}"
+      STORAGE_BUCKET: "${STORAGE_BUCKET}"
+      STORAGE_ACCESS_KEY: "${STORAGE_ACCESS_KEY}"
+      STORAGE_SECRET_KEY: "${STORAGE_SECRET_KEY}"
+      RESEND_API_KEY: "${RESEND_API_KEY}"
+      EMAIL_FROM: "${EMAIL_FROM}"
+      NEXT_PUBLIC_DEFAULT_CURRENCY: "${NEXT_PUBLIC_DEFAULT_CURRENCY:-USD}"
+      NEXT_PUBLIC_DEFAULT_LOCALE: "${NEXT_PUBLIC_DEFAULT_LOCALE:-en-ZW}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: cellphone-dealer-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "${DB_USER:-cellphone_dealer}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-cellphone_dealer_prod}"
+      POSTGRES_DB: "${DB_NAME:-cellphone_dealer}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-cellphone_dealer}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  minio:
+    image: minio/minio:latest
+    container_name: cellphone-dealer-storage
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_USER:-minioadmin}"
+      MINIO_ROOT_PASSWORD: "${MINIO_PASSWORD:-minioadmin_prod}"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+  minio_data:
+
+networks:
+  app-network:
+    driver: bridge

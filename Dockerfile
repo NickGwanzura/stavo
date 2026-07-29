@@ -34,11 +34,10 @@ COPY --from=builder /app/public ./public
 # Copy Prisma for runtime migrations
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-# Keep the project's pinned Prisma CLI and engines in the runtime image. Without
-# these, `npx prisma` downloads the latest major version at startup, which can
-# reject this project's Prisma 5 schema before migrations are applied.
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+# Prisma migrations run before the server starts. Copy the complete dependency
+# tree so the pinned Prisma 5 CLI and all of its runtime modules are present;
+# the standalone output does not trace the migration CLI's dynamic imports.
+COPY --from=builder /app/node_modules ./node_modules
 
 RUN chown -R nextjs:nodejs /app
 

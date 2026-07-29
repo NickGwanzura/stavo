@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/db";
 import { InventoryListClient } from "./inventory-list-client";
+
 
 export const dynamic = "force-dynamic";
 

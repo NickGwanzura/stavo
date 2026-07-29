@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/db";
 import { InvoicesPageClient } from "./invoices-page-client";
+
 
 export const dynamic = "force-dynamic";
 

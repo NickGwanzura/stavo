@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { ProductDetailsClient } from "./product-details-client";
+
 
 export const dynamic = "force-dynamic";
 

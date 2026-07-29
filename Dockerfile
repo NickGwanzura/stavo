@@ -9,11 +9,9 @@ COPY package.json package-lock.json ./
 COPY prisma ./prisma/
 
 RUN npm ci --legacy-peer-deps
-
 RUN npx prisma generate
 
 COPY . .
-
 RUN npm run build
 
 # Stage 2: Production runner
@@ -26,14 +24,16 @@ RUN apk add --no-cache libc6-compat openssl
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy everything needed
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
+# Copy standalone output (this includes server.js, node_modules, package.json at root)
+COPY --from=builder /app/.next/standalone ./
+
+# Copy static files
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
+
+# Copy Prisma for runtime migrations
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/next.config.mjs ./
-COPY --from=builder /app/tsconfig.json ./tsconfig.json
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
 RUN chown -R nextjs:nodejs /app
 
@@ -45,4 +45,5 @@ ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 ENV NODE_ENV production
 
-CMD ["sh", "-c", "npx prisma migrate deploy --schema=./prisma/schema.prisma 2>&1 || echo 'Migration skipped'; npx next start"]
+# Run migration (continue if it fails) then start server
+CMD sh -c "npx prisma migrate deploy --schema=./prisma/schema.prisma 2>&1 || true; node server.js"

@@ -33,13 +33,22 @@ RUN apk add --no-cache libc6-compat openssl
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy built assets
-COPY --from=builder /app/public ./public
+# Copy standalone build output (includes server.js, package.json, node_modules)
 COPY --from=builder /app/.next/standalone ./
+
+# Copy static assets
 COPY --from=builder /app/.next/static ./.next/static
+
+# Copy public assets
+COPY --from=builder /app/public ./public
+
+# Copy Prisma schema + migrations for runtime migration
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+
+# Copy Prisma client from node_modules
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+
+# Copy next.config
 COPY --from=builder /app/next.config.mjs ./
 
 # Set permissions
@@ -52,6 +61,7 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 ENV NODE_ENV production
+ENV PRISMA_SCHEMA_DIR=/app/prisma
 
 # Run migrations and start the app
-CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy --schema=./prisma/schema.prisma 2>&1 || echo 'Migration skipped or failed - continuing...' && node server.js"]

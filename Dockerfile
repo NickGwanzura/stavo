@@ -53,4 +53,5 @@ ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 ENV NODE_ENV production
 
-CMD ["node", "server.js"]
+# Run migrations and start the app
+CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]

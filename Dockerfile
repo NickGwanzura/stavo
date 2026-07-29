@@ -52,4 +52,4 @@ ENV NODE_ENV production
 
 # Migrations must succeed before serving traffic; otherwise the app starts
 # against an uninitialised database and write actions fail later.
-CMD sh -c "npx prisma migrate deploy --schema=./prisma/schema.prisma && node server.js"
+CMD sh -c "node ./node_modules/prisma/build/index.js migrate deploy --schema=./prisma/schema.prisma && node server.js"

@@ -13,10 +13,16 @@
   body {
     @apply bg-slate-50 text-slate-900;
     -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: contain;
   }
 
   button, a, input, select, textarea {
     @apply touch-manipulation;
+  }
+
+  /* Prevent iOS from zooming the page when a compact form field receives focus. */
+  input, select, textarea {
+    @apply text-base sm:text-sm;
   }
 
   ::-webkit-scrollbar {
@@ -45,6 +51,10 @@
   /* Safe area for mobile devices with gesture nav */
   .pb-safe {
     padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .pb-nav-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .pt-safe {

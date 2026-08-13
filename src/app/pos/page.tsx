@@ -21,6 +21,9 @@ export default function POSPage() {
   const router = useRouter(); const { showToast } = useToast(); const [saving, setSaving] = useState(false);
 
   const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const matchingInventory = inventory.filter((item) =>
+    item.search.toLowerCase().includes(search.trim().toLowerCase())
+  );
 
   useEffect(() => { getSellableInventory().then(setInventory).catch(() => showToast("Unable to load inventory", "error")); }, [showToast]);
 
@@ -47,19 +50,16 @@ export default function POSPage() {
               className="pl-9 h-12 text-base"
             />
           </div>
-          <Link href="/scan"><Button variant="outline" className="h-12 px-4" aria-label="Scan IMEI">
+          <Link href="/scan" aria-label="Scan IMEI" className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 shadow-sm transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
             <ScanLine className="h-5 w-5" />
-          </Button></Link>
+          </Link>
         </div>
 
-        <div className="space-y-2 max-h-44 overflow-y-auto rounded-xl border border-slate-200 bg-white p-2">
-          {inventory.filter((item) => item.search.toLowerCase().includes(search.toLowerCase())).map((item) => <button key={item.id} onClick={() => addItem(item)} className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left hover:bg-slate-50"><span className="text-sm font-medium">{item.name}</span><span className="text-sm">{formatCurrency(item.price)}</span></button>)}
+        <div className="max-h-56 space-y-1 overflow-y-auto rounded-xl border border-slate-200 bg-white p-2" aria-label="Sellable inventory">
+          {matchingInventory.map((item) => <button type="button" key={item.id} onClick={() => addItem(item)} className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"><span className="min-w-0 truncate text-sm font-medium">{item.name}</span><span className="shrink-0 text-sm font-semibold">{formatCurrency(item.price)}</span></button>)}
           {inventory.length === 0 && <p className="p-3 text-center text-sm text-slate-500">No sellable stock available.</p>}
+          {inventory.length > 0 && matchingInventory.length === 0 && <p className="p-3 text-center text-sm text-slate-500">No products match “{search}”.</p>}
         </div>
-        <Button onClick={() => inventory[0] && addItem(inventory[0])} variant="outline" className="w-full h-12">
-          <ShoppingCart className="h-5 w-5 mr-2" />
-          Add First In-Stock Item
-        </Button>
 
         {/* Cart */}
         <Card>
@@ -82,7 +82,7 @@ export default function POSPage() {
                   <span className="text-sm font-semibold text-slate-900 mr-3">
                     {formatCurrency(item.price * item.qty)}
                   </span>
-                  <button onClick={() => setItems(items.filter((cartItem) => cartItem.id !== item.id))} className="text-slate-400 hover:text-red-600">
+                  <button type="button" onClick={() => setItems(items.filter((cartItem) => cartItem.id !== item.id))} aria-label={`Remove ${item.name} from cart`} className="flex h-11 w-11 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500">
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
@@ -102,9 +102,11 @@ export default function POSPage() {
                   <div className="flex flex-wrap gap-2">
                     {paymentMethods.map((pm) => (
                       <button
+                        type="button"
                         key={pm.code}
                         onClick={() => setSelectedPayment(pm.code)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                        aria-pressed={selectedPayment === pm.code}
+                        className={`min-h-11 rounded-lg border px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
                           selectedPayment === pm.code
                             ? "border-emerald-500 bg-emerald-50 text-emerald-700"
                             : "border-slate-200 text-slate-600 hover:border-slate-300"
@@ -117,7 +119,7 @@ export default function POSPage() {
                 </div>
 
                 {/* Customer */}
-                <Link href="/customers" className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg border border-dashed border-slate-300 text-sm text-slate-500 hover:border-slate-400">
+                <Link href="/customers" className="flex min-h-11 w-full items-center gap-2 rounded-lg border border-dashed border-slate-300 px-3 py-2.5 text-sm text-slate-600 transition-colors hover:border-emerald-400 hover:text-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">
                   <User className="h-4 w-4" />
                   Manage customers
                 </Link>

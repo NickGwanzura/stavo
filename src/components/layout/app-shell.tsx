@@ -126,8 +126,9 @@ export function AppShell({ children }: AppShellProps) {
                   <li key={item.href}>
                     <Link
                       href={item.href}
+                      aria-current={isActive ? "page" : undefined}
                       className={cn(
-                        "flex items-center gap-x-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                        "flex min-h-11 items-center gap-x-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
                         isActive
                           ? "bg-emerald-50 text-emerald-700"
                           : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
@@ -166,6 +167,12 @@ export function AppShell({ children }: AppShellProps) {
 
       {/* Mobile Sidebar Drawer */}
       <aside
+        id="mobile-navigation"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Main navigation"
+        aria-hidden={!sidebarOpen}
+        inert={!sidebarOpen}
         className={cn(
           "fixed inset-y-0 left-0 z-40 flex w-72 flex-col bg-white shadow-xl transform transition-transform duration-200 ease-in-out lg:hidden",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -190,9 +197,10 @@ export function AppShell({ children }: AppShellProps) {
               <Link
                 key={item.href}
                 href={item.href}
+                aria-current={isActive ? "page" : undefined}
                 onClick={() => setSidebarOpen(false)}
                 className={cn(
-                  "flex items-center gap-x-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  "flex min-h-11 items-center gap-x-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
                   isActive
                     ? "bg-emerald-50 text-emerald-700"
                     : "text-slate-700 hover:bg-slate-100"
@@ -216,6 +224,8 @@ export function AppShell({ children }: AppShellProps) {
               aria-label="Open navigation menu"
               title="Open navigation menu"
               onClick={() => setSidebarOpen(true)}
+              aria-expanded={sidebarOpen}
+              aria-controls="mobile-navigation"
               className="flex h-11 w-11 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             >
               <Menu className="h-6 w-6" />
@@ -231,7 +241,7 @@ export function AppShell({ children }: AppShellProps) {
         <main id="main-content" tabIndex={-1} className="pb-safe outline-none lg:pb-8">{children}</main>
 
         {/* Bottom Navigation (Mobile) */}
-        <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-slate-200 bg-white lg:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-slate-200 bg-white pb-nav-safe lg:hidden" aria-label="Primary navigation">
           <div className="flex items-center justify-around h-16 px-2">
             {bottomNavItems.map((item) => {
               const isActive = pathname === item.href;
@@ -241,6 +251,7 @@ export function AppShell({ children }: AppShellProps) {
                     key={item.href}
                     href={item.href}
                     aria-label={item.label}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
                       "relative -mt-4 flex h-14 w-14 items-center justify-center rounded-full transition-colors shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
                       isActive
@@ -256,6 +267,7 @@ export function AppShell({ children }: AppShellProps) {
                 <Link
                   key={item.href}
                   href={item.href}
+                  aria-current={isActive ? "page" : undefined}
                   className={cn(
                     "flex min-h-11 min-w-11 flex-col items-center justify-center gap-y-0.5 px-2 py-1 text-[10px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
                     isActive

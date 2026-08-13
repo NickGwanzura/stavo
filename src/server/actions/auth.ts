@@ -22,6 +22,9 @@ export async function setupOwner(input: unknown) {
 
     const passwordHash = await hashPassword(data.password);
     const result = await prisma.$transaction(async (tx) => {
+      // Serialise the one-time provisioning path so two simultaneous requests
+      // cannot both pass the empty-user check.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext('tsm-mobiles-owner-setup'))`;
       if ((await tx.user.count()) > 0) {
         throw new Error("OWNER_ALREADY_EXISTS");
       }
@@ -92,7 +95,7 @@ export async function setupOwner(input: unknown) {
         },
       });
       return user;
-    });
+    }, { isolationLevel: "Serializable" });
 
     return { success: true as const, ownerId: result.id };
   } catch (error) {

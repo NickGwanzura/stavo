@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/db";
 import { InventoryListClient } from "./inventory-list-client";
 import { getCurrentTenant } from "@/lib/tenant";
@@ -7,8 +6,7 @@ import { getCurrentTenant } from "@/lib/tenant";
 export const dynamic = "force-dynamic";
 
 async function getInventoryData() {
-  try {
-    const tenant = await getCurrentTenant();
+  const tenant = await getCurrentTenant();
     const items = await prisma.inventoryItem.findMany({
       where: { organisationId: tenant.organisationId, isActive: true, isAccessory: false },
       include: {
@@ -36,7 +34,7 @@ async function getInventoryData() {
       take: 50,
     });
 
-    return {
+  return {
       items: items.map((item) => ({
         id: item.id,
         stockNumber: item.stockNumber,
@@ -64,10 +62,7 @@ async function getInventoryData() {
         sellingPrice: a.sellingPrice?.toNumber() || null,
         branch: a.branch?.name || null,
       })),
-    };
-  } catch {
-    return { items: [], accessories: [] };
-  }
+  };
 }
 
 export default async function InventoryPage() {

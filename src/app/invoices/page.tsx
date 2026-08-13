@@ -6,9 +6,8 @@ import { InvoicesPageClient } from "./invoices-page-client";
 export const dynamic = "force-dynamic";
 
 export default async function InvoicesPage() {
-  try {
-    const tenant = await getCurrentTenant();
-    const invoices = await prisma.invoice.findMany({
+  const tenant = await getCurrentTenant();
+  const invoices = await prisma.invoice.findMany({
       where: { organisationId: tenant.organisationId },
       orderBy: { createdAt: "desc" },
       take: 50,
@@ -17,7 +16,7 @@ export default async function InvoicesPage() {
       },
     });
 
-    return (
+  return (
       <InvoicesPageClient
         invoices={invoices.map((inv) => ({
           id: inv.id,
@@ -31,8 +30,5 @@ export default async function InvoicesPage() {
           currency: inv.currency,
         }))}
       />
-    );
-  } catch {
-    return <InvoicesPageClient invoices={[]} />;
-  }
+  );
 }

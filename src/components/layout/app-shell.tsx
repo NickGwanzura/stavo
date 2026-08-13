@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth-client";
@@ -18,12 +19,9 @@ import {
   FileText,
   Users,
   Truck,
-  ClipboardList,
   BarChart3,
   DollarSign,
   ShoppingBag,
-  ArrowLeftRight,
-  UserCircle,
 } from "lucide-react";
 const bottomNavItems = [
   { href: "/", label: "Home", icon: Home },
@@ -40,10 +38,7 @@ const moreMenuItems = [
   { href: "/suppliers", label: "Suppliers", icon: Truck },
   { href: "/expenses", label: "Expenses", icon: DollarSign },
   { href: "/purchases", label: "Purchases", icon: ShoppingBag },
-  { href: "/transfers", label: "Transfers", icon: ArrowLeftRight },
-  { href: "/stock-counts", label: "Stock Counts", icon: ClipboardList },
   { href: "/reports", label: "Reports", icon: BarChart3 },
-  { href: "/users", label: "Users", icon: UserCircle },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -57,15 +52,8 @@ const sidebarNavItems = [
   { href: "/suppliers", label: "Suppliers", icon: Truck },
   { href: "/expenses", label: "Expenses", icon: DollarSign },
   { href: "/purchases", label: "Purchases", icon: ShoppingBag },
-  { href: "/transfers", label: "Transfers", icon: ArrowLeftRight },
-  { href: "/stock-counts", label: "Stock Counts", icon: ClipboardList },
   { href: "/reservations", label: "Reservations", icon: ClockIcon },
-  { href: "/instalments", label: "Instalments", icon: DollarSign },
-  { href: "/cash-up", label: "Daily Cash-Up", icon: DollarSign },
-  { href: "/warranty", label: "Warranty", icon: FileText },
-  { href: "/trade-in", label: "Trade-In", icon: ArrowLeftRight },
   { href: "/reports", label: "Reports", icon: BarChart3 },
-  { href: "/users", label: "Users", icon: UserCircle },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -113,11 +101,9 @@ export function AppShell({ children }: AppShellProps) {
       <aside className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-64 lg:flex-col">
         <div className="flex flex-col gap-y-5 border-r border-slate-200 bg-white px-4 pb-4 pt-4 h-full">
           <div className="flex items-center gap-x-3 px-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600">
-              <span className="text-lg font-bold text-white">CD</span>
-            </div>
+            <Image src="/logo.jpg" alt="TSM Mobiles" width={44} height={44} className="h-11 w-11 rounded-lg object-cover" priority />
             <span className="text-lg font-semibold text-slate-900">
-              CellDealer
+              TSM Mobiles
             </span>
           </div>
           <nav className="flex flex-1 flex-col overflow-y-auto">
@@ -215,7 +201,7 @@ export function AppShell({ children }: AppShellProps) {
               <Menu className="h-6 w-6" />
             </button>
             <span className="text-base font-semibold text-slate-900">
-              CellDealer
+              TSM Mobiles
             </span>
             <div className="w-10" /> {/* Spacer */}
           </div>

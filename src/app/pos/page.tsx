@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -11,17 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import { Search, ShoppingCart, ScanLine, User, Trash2, Check } from "lucide-react";
-
-const paymentMethods = [
-  "Cash", "EcoCash", "OneMoney", "InnBucks", "ZIPIT",
-  "Bank Transfer", "Swipe", "Visa/Mastercard", "Customer Credit",
-];
+import Link from "next/link";
+import { paymentMethods, type PaymentMethodCode } from "@/lib/sales";
 
 export default function POSPage() {
   const [items, setItems] = useState<{ id?: string; name: string; price: number; qty: number }[]>([]);
-  const [inventory, setInventory] = useState<{ id: string; name: string; price: number }[]>([]);
+  const [inventory, setInventory] = useState<{ id: string; name: string; search: string; price: number }[]>([]);
   const [search, setSearch] = useState("");
-  const [selectedPayment, setSelectedPayment] = useState("Cash");
+  const [selectedPayment, setSelectedPayment] = useState<PaymentMethodCode>("CASH");
   const router = useRouter(); const { showToast } = useToast(); const [saving, setSaving] = useState(false);
 
   const total = items.reduce((s, i) => s + i.price * i.qty, 0);
@@ -33,7 +29,7 @@ export default function POSPage() {
     if (items.some((cartItem) => cartItem.id === item.id)) return;
     setItems([...items, { ...item, qty: 1 }]);
   }
-  async function finishSale() { setSaving(true); const result = await completeSale({ items, paymentMethod: selectedPayment }); setSaving(false); if (result.success) { showToast("Sale completed", "success"); setItems([]); router.push(`/invoices/${result.invoiceId}`); } else showToast(result.error || "Sale failed", "error"); }
+  async function finishSale() { setSaving(true); const result = await completeSale({ items: items.map((item) => ({ id: item.id, qty: 1 })), paymentMethod: selectedPayment }); setSaving(false); if (result.success) { showToast("Sale completed", "success"); setItems([]); router.push(`/invoices/${result.invoiceId}`); } else showToast(result.error || "Sale failed", "error"); }
 
   return (
     <div className="space-y-4 pb-24">
@@ -51,13 +47,13 @@ export default function POSPage() {
               className="pl-9 h-12 text-base"
             />
           </div>
-          <Button variant="outline" className="h-12 px-4">
+          <Link href="/scan"><Button variant="outline" className="h-12 px-4" aria-label="Scan IMEI">
             <ScanLine className="h-5 w-5" />
-          </Button>
+          </Button></Link>
         </div>
 
         <div className="space-y-2 max-h-44 overflow-y-auto rounded-xl border border-slate-200 bg-white p-2">
-          {inventory.filter((item) => item.name.toLowerCase().includes(search.toLowerCase())).map((item) => <button key={item.id} onClick={() => addItem(item)} className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left hover:bg-slate-50"><span className="text-sm font-medium">{item.name}</span><span className="text-sm">{formatCurrency(item.price)}</span></button>)}
+          {inventory.filter((item) => item.search.toLowerCase().includes(search.toLowerCase())).map((item) => <button key={item.id} onClick={() => addItem(item)} className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left hover:bg-slate-50"><span className="text-sm font-medium">{item.name}</span><span className="text-sm">{formatCurrency(item.price)}</span></button>)}
           {inventory.length === 0 && <p className="p-3 text-center text-sm text-slate-500">No sellable stock available.</p>}
         </div>
         <Button onClick={() => inventory[0] && addItem(inventory[0])} variant="outline" className="w-full h-12">
@@ -106,25 +102,25 @@ export default function POSPage() {
                   <div className="flex flex-wrap gap-2">
                     {paymentMethods.map((pm) => (
                       <button
-                        key={pm}
-                        onClick={() => setSelectedPayment(pm)}
+                        key={pm.code}
+                        onClick={() => setSelectedPayment(pm.code)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                          selectedPayment === pm
+                          selectedPayment === pm.code
                             ? "border-emerald-500 bg-emerald-50 text-emerald-700"
                             : "border-slate-200 text-slate-600 hover:border-slate-300"
                         }`}
                       >
-                        {pm}
+                        {pm.label}
                       </button>
                     ))}
                   </div>
                 </div>
 
                 {/* Customer */}
-                <button className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg border border-dashed border-slate-300 text-sm text-slate-500 hover:border-slate-400">
+                <Link href="/customers" className="flex items-center gap-2 w-full px-3 py-2.5 rounded-lg border border-dashed border-slate-300 text-sm text-slate-500 hover:border-slate-400">
                   <User className="h-4 w-4" />
-                  Add Customer (optional)
-                </button>
+                  Manage customers
+                </Link>
 
                 <Button onClick={finishSale} disabled={saving} className="w-full h-12 text-base">
                   <Check className="h-5 w-5 mr-2" />

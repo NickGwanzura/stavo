@@ -9,12 +9,10 @@ import { formatCurrency, formatDate, formatDateTime } from "@/lib/utils";
 import {
   ArrowLeft,
   ShoppingCart,
-  FileText,
   Truck,
   Wrench,
   TestTube,
   History,
-  Printer,
   Tag,
   Smartphone,
 } from "lucide-react";
@@ -132,24 +130,8 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
                   Sell
                 </Button>
               </Link>
-              <Button size="sm" variant="outline">
-                <FileText className="h-4 w-4 mr-1" />
-                Quote
-              </Button>
-              <Button size="sm" variant="outline">
-                <Tag className="h-4 w-4 mr-1" />
-                Edit Price
-              </Button>
-              <Button size="sm" variant="outline">
-                <Truck className="h-4 w-4 mr-1" />
-                Transfer
-              </Button>
             </>
           )}
-          <Button size="sm" variant="outline">
-            <Printer className="h-4 w-4 mr-1" />
-            Label
-          </Button>
         </div>
       </div>
 
@@ -295,7 +277,6 @@ export function ProductDetailsClient({ product }: { product: ProductData }) {
               <CardContent className="p-8 text-center">
                 <TestTube className="h-12 w-12 text-slate-300 mx-auto mb-3" />
                 <p className="text-sm text-slate-500">No test records</p>
-                <Button variant="outline" size="sm" className="mt-3">Test Device</Button>
               </CardContent>
             </Card>
           ) : (

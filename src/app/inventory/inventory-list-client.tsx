@@ -12,7 +12,6 @@ import {
   Plus,
   Package,
   Smartphone,
-  SlidersHorizontal,
 } from "lucide-react";
 
 interface InventoryItemData {
@@ -94,9 +93,6 @@ export function InventoryListClient({ data }: InventoryProps) {
               className="pl-9 h-11"
             />
           </div>
-          <Button variant="outline" className="h-11 px-3">
-            <SlidersHorizontal className="h-4 w-4" />
-          </Button>
         </div>
 
         {/* Tabs */}

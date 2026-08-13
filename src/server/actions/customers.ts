@@ -37,6 +37,7 @@ export async function createCustomer(formData: FormData) {
         notes: data.notes,
       },
     });
+    await prisma.auditLog.create({ data: { organisationId: tenant.organisationId, branchId: tenant.branchId, userId: tenant.userId, action: "CREATE", entity: "Customer", recordId: customer.id, newValues: { name: customer.name, phone: customer.phone } } });
 
     revalidatePath("/customers");
     return { success: true as const, data: customer };
@@ -48,9 +49,10 @@ export async function createCustomer(formData: FormData) {
   }
 }
 
-export async function getCustomers(organisationId: string) {
+export async function getCustomers() {
+  const tenant = await getCurrentTenant();
   return prisma.customer.findMany({
-    where: { organisationId, isActive: true },
+    where: { organisationId: tenant.organisationId, isActive: true },
     orderBy: { createdAt: "desc" },
     take: 100,
   });

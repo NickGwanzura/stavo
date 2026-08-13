@@ -27,14 +27,11 @@ async function main() {
 
   // Create default organisation
   const org = await prisma.organisation.upsert({
-    where: { slug: "ximex-demo" },
+    where: { slug: "tsm-mobiles" },
     update: {},
     create: {
-      name: "Ximex Demo Dealers",
-      slug: "ximex-demo",
-      address: "Ximex Mall, Harare, Zimbabwe",
-      phone: "+263 77 000 0000",
-      email: "info@ximexdemo.co.zw",
+      name: "TSM Mobiles",
+      slug: "tsm-mobiles",
       invoicePrefix: "INV",
       quotationPrefix: "QTN",
       defaultCurrency: "USD",
@@ -47,12 +44,7 @@ async function main() {
 
   // Create branches
   const branches = await Promise.all(
-    [
-      { name: "Ximex Mall Shop 1" },
-      { name: "Ximex Mall Shop 2" },
-      { name: "CBD Storeroom" },
-      { name: "Repair Workshop" },
-    ].map((branch) =>
+    [{ name: "Main Branch" }].map((branch) =>
       prisma.branch.upsert({
         where: {
           organisationId_name: {

@@ -1,15 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import { ProductDetailsClient } from "./product-details-client";
+import { getCurrentTenant } from "@/lib/tenant";
 
 
 export const dynamic = "force-dynamic";
 
 async function getProduct(id: string) {
   try {
-    const item = await prisma.inventoryItem.findUnique({
-      where: { id },
+    const tenant = await getCurrentTenant();
+    const item = await prisma.inventoryItem.findFirst({
+      where: { id, organisationId: tenant.organisationId },
       include: {
         brand: { select: { name: true } },
         model: { select: { name: true } },

@@ -138,11 +138,12 @@ export function ExpensesClient({
                   <div className="space-y-1">
                     <Label>Payment Method</Label>
                     <select name="paymentMethod" className="flex h-10 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm">
-                      <option>Cash</option>
-                      <option>EcoCash</option>
-                      <option>Bank Transfer</option>
-                      <option>ZIPIT</option>
-                      <option>Swipe</option>
+                      <option value="CASH">Cash</option>
+                      <option value="ECOCASH">EcoCash</option>
+                      <option value="ONEMONEY">OneMoney</option>
+                      <option value="INNBUCKS">InnBucks</option>
+                      <option value="BANK">Bank Transfer / ZIPIT</option>
+                      <option value="CARD">Card / Swipe</option>
                     </select>
                   </div>
                   <div className="space-y-1">

@@ -1,11 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function NotFound() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
-      <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-100">
-        <span className="text-3xl font-bold text-slate-400">CD</span>
-      </div>
+      <Image src="/logo.jpg" alt="TSM Mobiles" width={96} height={96} className="mx-auto mb-6 h-24 w-24 rounded-2xl object-cover" />
       <h1 className="text-4xl font-bold text-slate-900 mb-2">404</h1>
       <p className="text-slate-500 mb-8 max-w-sm">
         This page doesn&apos;t exist or has been moved.

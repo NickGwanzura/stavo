@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { PageHeader } from "@/components/shared/page-header";
 import { useToast } from "@/components/ui/toast";
 import { Search, Smartphone, Camera, StopCircle } from "lucide-react";
+import { findInventoryItem } from "@/server/actions/inventory";
 
 export default function ScanPage() {
   const router = useRouter();
@@ -23,7 +24,7 @@ export default function ScanPage() {
   } | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const scannerRef = useRef<any>(null);
   const [scanMethod, setScanMethod] = useState<"manual" | "camera">("manual");
 
@@ -36,25 +37,38 @@ export default function ScanPage() {
     };
   }, []);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
-    const cleaned = imeiInput.replace(/\D/g, "");
+    const value = imeiInput.trim();
+    const cleaned = value.replace(/\D/g, "");
 
     if (cleaned.length === 15) {
       const valid = validateIMEI(cleaned);
       setResult({ type: "IMEI", value: cleaned, valid });
       if (valid) {
-        showToast(`Valid IMEI: ${cleaned}`, "success");
-        router.push(`/inventory?imei=${cleaned}`);
+        const item = await findInventoryItem(cleaned);
+        if (item) {
+          showToast("Inventory item found", "success");
+          router.push(`/inventory/${item.id}`);
+        } else {
+          setError("No inventory item matches this IMEI.");
+          showToast("IMEI not found", "error");
+        }
       } else {
         showToast("Invalid IMEI checksum", "error");
       }
     } else if (cleaned.length > 0) {
-      setResult({ type: "BARCODE", value: cleaned, valid: true });
-      showToast(`Searching for: ${cleaned}`, "success");
-      router.push(`/inventory?q=${cleaned}`);
+      const item = await findInventoryItem(value);
+      setResult({ type: "BARCODE", value, valid: Boolean(item) });
+      if (item) {
+        showToast("Inventory item found", "success");
+        router.push(`/inventory/${item.id}`);
+      } else {
+        setError("No inventory item matches this code.");
+        showToast("Item not found", "error");
+      }
     } else {
       setError("Please enter or scan a value");
     }

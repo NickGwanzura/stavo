@@ -1,3 +1,28 @@
 "use server";
-import { prisma } from "@/lib/db"; import { getCurrentTenant } from "@/lib/tenant"; import { revalidatePath } from "next/cache"; import { z } from "zod";
-export async function createReservation(f:FormData){try{const d=z.object({itemId:z.string(),expiryDate:z.string(),deposit:z.coerce.number().min(0).optional()}).parse(Object.fromEntries(f));const t=await getCurrentTenant();const item=await prisma.inventoryItem.findFirst({where:{id:d.itemId,organisationId:t.organisationId,branchId:t.branchId,status:"IN_STOCK"}});if(!item)return{success:false as const,error:"Select an in-stock item."};await prisma.$transaction([prisma.customerReservation.create({data:{organisationId:t.organisationId,itemId:d.itemId,userId:t.userId??"system",expiryDate:new Date(d.expiryDate),deposit:d.deposit||0}}),prisma.inventoryItem.update({where:{id:d.itemId},data:{status:"RESERVED"}})]);revalidatePath("/reservations");return{success:true as const}}catch{return{success:false as const,error:"Unable to reserve item."}}}
+
+import { Prisma } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { prisma } from "@/lib/db";
+import { getCurrentTenant } from "@/lib/tenant";
+
+export async function createReservation(formData: FormData) {
+  try {
+    const data = z.object({ itemId: z.string().cuid(), expiryDate: z.string().min(1), deposit: z.coerce.number().min(0).optional() }).parse(Object.fromEntries(formData));
+    const expiryDate = new Date(`${data.expiryDate}T23:59:59`);
+    if (!Number.isFinite(expiryDate.getTime()) || expiryDate <= new Date()) return { success: false as const, error: "Choose a future expiry date." };
+    const tenant = await getCurrentTenant();
+    await prisma.$transaction(async (tx) => {
+      const item = await tx.inventoryItem.findFirst({ where: { id: data.itemId, organisationId: tenant.organisationId, branchId: tenant.branchId, status: "IN_STOCK", isActive: true }, select: { id: true } });
+      if (!item) throw new Error("NOT_AVAILABLE");
+      const updated = await tx.inventoryItem.updateMany({ where: { id: item.id, organisationId: tenant.organisationId, status: "IN_STOCK" }, data: { status: "RESERVED" } });
+      if (updated.count !== 1) throw new Error("NOT_AVAILABLE");
+      const reservation = await tx.customerReservation.create({ data: { organisationId: tenant.organisationId, itemId: item.id, userId: tenant.userId, expiryDate, deposit: data.deposit || 0 } });
+      await tx.auditLog.create({ data: { organisationId: tenant.organisationId, branchId: tenant.branchId, userId: tenant.userId, action: "CREATE", entity: "Reservation", recordId: reservation.id, newValues: { itemId: item.id, expiryDate: expiryDate.toISOString(), deposit: String(data.deposit || 0) } } });
+    }, { isolationLevel: Prisma.TransactionIsolationLevel.Serializable });
+    revalidatePath("/reservations");
+    return { success: true as const };
+  } catch {
+    return { success: false as const, error: "This item is no longer available." };
+  }
+}

@@ -10,14 +10,14 @@ const appFont = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "CellDealer - Inventory & Sales Management",
+  title: "TSM Mobiles - Inventory & Sales Management",
   description:
-    "Mobile-first inventory, sales and finance platform for cellphone dealers",
+    "TSM Mobiles inventory, sales and finance management",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "CellDealer",
+    title: "TSM Mobiles",
   },
 };
 
@@ -37,7 +37,8 @@ export default function RootLayout({
   return (
     <html lang="en-ZW">
       <head>
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.svg" />
+        <link rel="apple-touch-icon" href="/logo.jpg" />
+        <link rel="icon" href="/logo.jpg" />
       </head>
       <body className={`${appFont.className} antialiased`}>
         <ToastProvider>

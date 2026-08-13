@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Link from "next/link";
@@ -9,14 +8,9 @@ import {
   Truck,
   DollarSign,
   ShoppingBag,
-  ArrowLeftRight,
-  ClipboardList,
   BarChart3,
-  UserCircle,
   Settings,
   Clock,
-  Wallet,
-  Shield,
 } from "lucide-react";
 
 const menuItems = [
@@ -26,15 +20,8 @@ const menuItems = [
   { href: "/suppliers", label: "Suppliers", icon: Truck, color: "purple" },
   { href: "/expenses", label: "Expenses", icon: DollarSign, color: "red" },
   { href: "/purchases", label: "Purchases", icon: ShoppingBag, color: "blue" },
-  { href: "/transfers", label: "Transfers", icon: ArrowLeftRight, color: "purple" },
-  { href: "/stock-counts", label: "Stock Counts", icon: ClipboardList, color: "blue" },
-  { href: "/trade-in", label: "Trade-In", icon: ArrowLeftRight, color: "purple" },
   { href: "/reservations", label: "Reservations", icon: Clock, color: "amber" },
-  { href: "/instalments", label: "Instalments", icon: Wallet, color: "green" },
-  { href: "/cash-up", label: "Daily Cash-Up", icon: DollarSign, color: "green" },
-  { href: "/warranty", label: "Warranty", icon: Shield, color: "blue" },
   { href: "/reports", label: "Reports", icon: BarChart3, color: "blue" },
-  { href: "/users", label: "Users", icon: UserCircle, color: "blue" },
   { href: "/settings", label: "Settings", icon: Settings, color: "gray" },
 ];
 

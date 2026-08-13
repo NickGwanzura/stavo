@@ -194,6 +194,8 @@ export async function receiveCellphone(formData: FormData) {
       return inventoryItem;
     });
 
+    await prisma.auditLog.create({ data: { organisationId: tenant.organisationId, branchId: tenant.branchId, userId: tenant.userId, action: "CREATE", entity: "InventoryItem", recordId: item.id, newValues: { stockNumber: item.stockNumber, productName: item.productName } } });
+
     revalidatePath("/inventory");
     return { success: true as const, data: { id: item.id, stockNumber: item.stockNumber } };
   } catch (error) {
@@ -222,6 +224,7 @@ export async function receiveAccessory(formData: FormData) {
           where: { id: existing.id },
           data: { quantity: { increment: data.quantity } },
         });
+        await prisma.auditLog.create({ data: { organisationId: tenant.organisationId, branchId: tenant.branchId, userId: tenant.userId, action: "INCREMENT", entity: "AccessoryStock", recordId: existing.id, newValues: { quantityAdded: data.quantity } } });
         revalidatePath("/inventory");
         return { success: true as const, data: { id: existing.id, type: "incremented" } };
       }
@@ -241,6 +244,7 @@ export async function receiveAccessory(formData: FormData) {
         sellingPrice: data.sellingPrice,
       },
     });
+    await prisma.auditLog.create({ data: { organisationId: tenant.organisationId, branchId: tenant.branchId, userId: tenant.userId, action: "CREATE", entity: "AccessoryStock", recordId: stock.id, newValues: { productName: stock.productName, quantity: stock.quantity } } });
 
     revalidatePath("/inventory");
     return { success: true as const, data: { id: stock.id, type: "created" } };
@@ -253,9 +257,14 @@ export async function receiveAccessory(formData: FormData) {
   }
 }
 
-export async function getInventoryItems(organisationId: string, branchId?: string) {
-  const where: Record<string, unknown> = { organisationId, isActive: true, isAccessory: false };
-  if (branchId) where.branchId = branchId;
+export async function getInventoryItems(branchId?: string) {
+  const tenant = await getCurrentTenant();
+  const where: Record<string, unknown> = { organisationId: tenant.organisationId, isActive: true, isAccessory: false };
+  if (branchId) {
+    const branch = await prisma.branch.findFirst({ where: { id: branchId, organisationId: tenant.organisationId, isActive: true }, select: { id: true } });
+    if (!branch) throw new Error("INVALID_BRANCH");
+    where.branchId = branch.id;
+  }
 
   const items = await prisma.inventoryItem.findMany({
     where,
@@ -296,5 +305,22 @@ export async function getInventoryItemById(id: string) {
     },
   });
 
+  return item;
+}
+
+export async function findInventoryItem(identifier: string) {
+  const value = z.string().trim().min(1).max(100).parse(identifier);
+  const tenant = await getCurrentTenant();
+  const item = await prisma.inventoryItem.findFirst({
+    where: {
+      organisationId: tenant.organisationId,
+      isActive: true,
+      OR: [
+        { stockNumber: { equals: value, mode: "insensitive" } },
+        { identifiers: { some: { value, isActive: true } } },
+      ],
+    },
+    select: { id: true, productName: true, stockNumber: true },
+  });
   return item;
 }

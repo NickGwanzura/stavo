@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,10 +51,8 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 sm:px-6">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-600">
-            <span className="text-2xl font-bold text-white">CD</span>
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900">CellDealer</h1>
+          <Image src="/logo.jpg" alt="TSM Mobiles" width={112} height={112} className="mx-auto mb-4 h-28 w-28 rounded-2xl object-cover shadow-sm" priority />
+          <h1 className="text-2xl font-bold text-slate-900">TSM Mobiles</h1>
           <p className="mt-1 text-sm text-slate-500">
             Sign in to manage your inventory
           </p>

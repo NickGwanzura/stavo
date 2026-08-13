@@ -1,7 +1,7 @@
 {
-  "name": "CellDealer - Inventory & Sales Management",
-  "short_name": "CellDealer",
-  "description": "Mobile-first inventory, sales and finance platform for cellphone dealers",
+  "name": "TSM Mobiles - Inventory & Sales Management",
+  "short_name": "TSM Mobiles",
+  "description": "TSM Mobiles inventory, sales and finance management",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
@@ -9,15 +9,15 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icons/icon-192x192.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml",
+      "src": "/logo.jpg",
+      "sizes": "640x640",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512x512.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
+      "src": "/logo.jpg",
+      "sizes": "640x640",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]

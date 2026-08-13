@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/lib/db";
 import { ExpensesClient } from "./expenses-client";
 import { getCurrentTenant } from "@/lib/tenant";
@@ -7,9 +6,8 @@ import { getCurrentTenant } from "@/lib/tenant";
 export const dynamic = "force-dynamic";
 
 export default async function ExpensesPage() {
-  try {
-    const tenant = await getCurrentTenant();
-    const [expenses, categories] = await Promise.all([
+  const tenant = await getCurrentTenant();
+  const [expenses, categories] = await Promise.all([
       prisma.expense.findMany({
         where: { organisationId: tenant.organisationId },
         orderBy: { expenseDate: "desc" },
@@ -25,7 +23,7 @@ export default async function ExpensesPage() {
       }),
     ]);
 
-    return (
+  return (
       <ExpensesClient
         expenses={expenses.map((e) => ({
           id: e.id,
@@ -44,8 +42,5 @@ export default async function ExpensesPage() {
         }))}
         categories={categories.map((c) => ({ id: c.id, name: c.name }))}
       />
-    );
-  } catch {
-    return <ExpensesClient expenses={[]} categories={[]} />;
-  }
+  );
 }

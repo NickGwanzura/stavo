@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -84,6 +84,18 @@ export function AppShell({ children }: AppShellProps) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSidebarOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [sidebarOpen]);
+
+  const isNavActive = (href: string) =>
+    pathname === href || (href !== "/" && pathname?.startsWith(`${href}/`));
+
   async function handleSignOut() {
     await authClient.signOut();
     router.replace("/auth/login");
@@ -109,7 +121,7 @@ export function AppShell({ children }: AppShellProps) {
           <nav className="flex flex-1 flex-col overflow-y-auto">
             <ul className="flex flex-1 flex-col gap-y-1">
               {sidebarNavItems.map((item) => {
-                const isActive = pathname === item.href;
+                const isActive = isNavActive(item.href);
                 return (
                   <li key={item.href}>
                     <Link
@@ -144,7 +156,9 @@ export function AppShell({ children }: AppShellProps) {
 
       {/* Mobile Overlay */}
       {sidebarOpen && (
-        <div
+        <button
+          type="button"
+          aria-label="Close navigation menu"
           className="fixed inset-0 z-30 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
@@ -153,22 +167,25 @@ export function AppShell({ children }: AppShellProps) {
       {/* Mobile Sidebar Drawer */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 w-72 bg-white shadow-xl transform transition-transform duration-200 ease-in-out lg:hidden",
+          "fixed inset-y-0 left-0 z-40 flex w-72 flex-col bg-white shadow-xl transform transition-transform duration-200 ease-in-out lg:hidden",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex items-center justify-between border-b border-slate-200 px-4 py-4">
           <span className="text-lg font-semibold text-slate-900">Menu</span>
           <button
+            type="button"
+            aria-label="Close navigation menu"
+            title="Close navigation menu"
             onClick={() => setSidebarOpen(false)}
-            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"
+            className="flex h-11 w-11 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
         <nav className="flex-1 overflow-y-auto px-2 py-4">
           {moreMenuItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = isNavActive(item.href);
             return (
               <Link
                 key={item.href}
@@ -195,8 +212,11 @@ export function AppShell({ children }: AppShellProps) {
         <header className="sticky top-0 z-20 border-b border-slate-200 bg-white lg:hidden">
           <div className="flex items-center justify-between px-4 h-14">
             <button
+              type="button"
+              aria-label="Open navigation menu"
+              title="Open navigation menu"
               onClick={() => setSidebarOpen(true)}
-              className="rounded-lg p-2 text-slate-500 hover:bg-slate-100"
+              className="flex h-11 w-11 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             >
               <Menu className="h-6 w-6" />
             </button>
@@ -208,7 +228,7 @@ export function AppShell({ children }: AppShellProps) {
         </header>
 
         {/* Page Content */}
-        <main className="pb-safe lg:pb-8">{children}</main>
+        <main id="main-content" tabIndex={-1} className="pb-safe outline-none lg:pb-8">{children}</main>
 
         {/* Bottom Navigation (Mobile) */}
         <nav className="fixed bottom-0 left-0 right-0 z-20 border-t border-slate-200 bg-white lg:hidden">
@@ -220,8 +240,9 @@ export function AppShell({ children }: AppShellProps) {
                   <Link
                     key={item.href}
                     href={item.href}
+                    aria-label={item.label}
                     className={cn(
-                      "relative -mt-4 flex h-14 w-14 items-center justify-center rounded-full transition-colors shadow-lg",
+                      "relative -mt-4 flex h-14 w-14 items-center justify-center rounded-full transition-colors shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
                       isActive
                         ? "bg-emerald-800 ring-4 ring-emerald-200"
                         : "bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800"
@@ -236,7 +257,7 @@ export function AppShell({ children }: AppShellProps) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex flex-col items-center gap-y-0.5 px-3 py-1 text-[10px] font-medium transition-colors",
+                    "flex min-h-11 min-w-11 flex-col items-center justify-center gap-y-0.5 px-2 py-1 text-[10px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500",
                     isActive
                       ? "text-emerald-600"
                       : "text-slate-500 hover:text-slate-700"

@@ -12,6 +12,18 @@ const baseURL =
   process.env.NEXT_PUBLIC_APP_URL ||
   (isProductionBuild ? "http://localhost:3000" : undefined);
 
+const trustedOrigins = Array.from(
+  new Set(
+    [
+      baseURL,
+      process.env.NEXT_PUBLIC_APP_URL,
+      "https://tsmmobile.store",
+      "https://www.tsmmobile.store",
+      "http://localhost:3000",
+    ].filter((origin): origin is string => Boolean(origin))
+  )
+);
+
 if (process.env.NODE_ENV === "production" && !secret) {
   throw new Error("BETTER_AUTH_SECRET must be set in production.");
 }
@@ -23,6 +35,7 @@ if (process.env.NODE_ENV === "production" && !baseURL) {
 export const auth = betterAuth({
   secret,
   baseURL,
+  trustedOrigins,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),

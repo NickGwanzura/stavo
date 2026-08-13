@@ -113,7 +113,7 @@ export function AppShell({ children }: AppShellProps) {
       <aside className="hidden lg:fixed lg:inset-y-0 lg:z-40 lg:flex lg:w-64 lg:flex-col">
         <div className="flex flex-col gap-y-5 border-r border-slate-200 bg-white px-4 pb-4 pt-4 h-full">
           <div className="flex items-center gap-x-3 px-2">
-            <Image src="/logo.jpg" alt="TSM Mobiles" width={44} height={44} className="h-11 w-11 rounded-lg object-cover" priority />
+            <Image src="/logo.jpg" alt="TSM Mobiles" width={44} height={44} className="h-11 w-11 rounded-lg bg-slate-50 p-1 object-contain" priority />
             <span className="text-lg font-semibold text-slate-900">
               TSM Mobiles
             </span>

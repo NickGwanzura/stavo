@@ -14,10 +14,10 @@ import {
   TrendingUp,
   DollarSign,
   ShoppingCart,
-  AlertTriangle,
+  CheckCircle2,
   ArrowRight,
   ScanLine,
-  Repeat2,
+  Users,
   Truck,
 } from "lucide-react";
 
@@ -55,13 +55,13 @@ export function DashboardClient({ data }: { data: DashboardData }) {
           variant="success"
         />
         <DashboardCard
-          title="Expenses"
+          title="Expenses Today"
           value={formatCurrency(data.todayExpenses)}
           icon={DollarSign}
           variant="destructive"
         />
         <DashboardCard
-          title="Net Cash"
+          title="Net Cash Today"
           value={formatCurrency(netCashMovement)}
           icon={ShoppingCart}
           variant={netCashMovement >= 0 ? "success" : "destructive"}
@@ -147,25 +147,24 @@ export function DashboardClient({ data }: { data: DashboardData }) {
             color="purple"
           />
           <QuickActionButton
-            label="Trade-In"
-            description="Assess a customer device"
-            href="/trade-in"
-            icon={Repeat2}
+            label="New Customer"
+            description="Save customer details"
+            href="/customers"
+            icon={Users}
             color="amber"
           />
         </div>
       </div>
 
-      {/* Low Stock Warning (placeholder) */}
-      <Card className="border-amber-200 bg-amber-50">
+      <Card className="border-emerald-200 bg-emerald-50">
         <CardContent className="flex items-start gap-3 p-4">
-          <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+          <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-medium text-amber-800">
-              No low stock alerts
+            <p className="text-sm font-medium text-emerald-800">
+              Inventory is clear
             </p>
-            <p className="text-xs text-amber-700 mt-1">
-              All accessories are currently above minimum stock levels.
+            <p className="text-xs text-emerald-700 mt-1">
+              Nothing requires attention today.
             </p>
           </div>
         </CardContent>

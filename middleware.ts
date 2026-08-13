@@ -3,6 +3,11 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  // Static files must remain public so the login/setup screens and the
+  // authenticated shell can load the TSM Mobiles logo, icons and fonts.
+  if (/\.[^/]+$/.test(pathname)) {
+    return NextResponse.next();
+  }
   const isPublicAuthRoute = pathname === "/auth/login" || pathname === "/auth/setup";
   const sessionCookie = getSessionCookie(request);
 
